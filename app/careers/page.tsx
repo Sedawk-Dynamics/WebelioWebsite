@@ -173,8 +173,8 @@ export default function CareersPage() {
       <section className="pt-24 pb-16 px-4">
         <div className="container mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <h1 className="text-5xl md:text-7xl font-bold text-webelio-secondary mb-6">Join Our Team</h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">Join Our Team</h1>
+            <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
               Build the future of digital innovation with us. We're looking for passionate individuals who want to make
               a difference in the world of technology.
             </p>
@@ -208,8 +208,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-webelio-secondary mb-4">Our Culture & Values</h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Our Culture & Values</h2>
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
               We foster an environment where creativity thrives, innovation flourishes, and every team member can reach
               their full potential.
             </p>
@@ -228,7 +228,7 @@ export default function CareersPage() {
                   <CardContent className="p-6 text-center">
                     <div className="text-webelio-secondary mb-4 flex justify-center">{value.icon}</div>
                     <h3 className="text-xl font-semibold text-white mb-3">{value.title}</h3>
-                    <p className="text-gray-300 text-sm leading-relaxed">{value.description}</p>
+                    <p className="text-gray-200 text-sm leading-relaxed">{value.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -247,8 +247,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-webelio-secondary mb-4">Life at Webelio</h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Life at Webelio</h2>
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
               Take a glimpse into our vibrant workplace culture, collaborative environment, and the amazing experiences
               we share together.
             </p>
@@ -294,8 +294,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-webelio-secondary mb-4">Benefits & Perks</h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Benefits & Perks</h2>
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
               We believe in taking care of our team members with comprehensive benefits and exciting perks that make
               work enjoyable.
             </p>
@@ -316,7 +316,7 @@ export default function CareersPage() {
                       <div className="text-webelio-secondary mt-1">{benefit.icon}</div>
                       <div>
                         <h3 className="text-lg font-semibold text-white mb-2">{benefit.title}</h3>
-                        <p className="text-gray-300 text-sm leading-relaxed">{benefit.description}</p>
+                        <p className="text-gray-200 text-sm leading-relaxed">{benefit.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -337,8 +337,8 @@ export default function CareersPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-webelio-secondary mb-4">Open Positions</h2>
-            <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Open Positions</h2>
+            <p className="text-lg text-gray-200 max-w-2xl mx-auto">
               Discover exciting career opportunities and find the perfect role to grow your skills and advance your
               career with us.
             </p>
@@ -358,7 +358,7 @@ export default function CareersPage() {
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-xl font-semibold text-white mb-2">{position.title}</h3>
-                        <div className="flex flex-wrap gap-2 text-sm text-gray-300">
+                        <div className="flex flex-wrap gap-2 text-sm text-gray-200">
                           <span className="flex items-center">
                             <Users className="w-4 h-4 mr-1" />
                             {position.department}
@@ -375,7 +375,7 @@ export default function CareersPage() {
                       </div>
                     </div>
 
-                    <p className="text-gray-300 text-sm mb-4 leading-relaxed">{position.description}</p>
+                    <p className="text-gray-200 text-sm mb-4 leading-relaxed">{position.description}</p>
 
                     <div className="mb-4">
                       <h4 className="text-white font-medium mb-2">Required Skills:</h4>
@@ -413,8 +413,8 @@ export default function CareersPage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-webelio-secondary mb-6">Ready to Join Us?</h2>
-            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Ready to Join Us?</h2>
+            <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
               Don't see a position that fits? We're always looking for talented individuals. Send us your resume and
               let's start a conversation.
             </p>

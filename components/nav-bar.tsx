@@ -28,6 +28,8 @@ export function NavBar() {
     { name: "About", href: "/about" },
     { name: "Services", href: "/services" },
     { name: t("nav.projects"), href: "/projects" },
+    { name: "Portfolio", href: "/portfolio/digital-marketing" },
+    { name: "Startup Kit", href: "/startup-kit" },
     { name: t("nav.process"), href: "/process" },
     { name: t("nav.support"), href: "/support" },
     { name: "Careers", href: "/careers" },

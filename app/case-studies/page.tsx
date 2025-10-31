@@ -307,7 +307,7 @@ export default function CaseStudiesPage() {
                 Success Stories
               </span>
             </h1>
-            <p className="text-xl text-gray-400 max-w-4xl mx-auto mb-12">
+            <p className="text-xl text-gray-300 max-w-4xl mx-auto mb-12">
               Discover how we've helped businesses across various industries achieve remarkable growth through strategic
               digital marketing campaigns. Real results, real impact.
             </p>
@@ -379,7 +379,7 @@ export default function CaseStudiesPage() {
                         {caseStudy.title}
                       </h3>
                       <p className="text-emerald-400 text-sm mb-3">{caseStudy.client}</p>
-                      <p className="text-gray-400 mb-6 leading-relaxed line-clamp-2">{caseStudy.description}</p>
+                      <p className="text-gray-300 mb-6 leading-relaxed line-clamp-2">{caseStudy.description}</p>
 
                       {/* Key Metrics */}
                       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -389,7 +389,7 @@ export default function CaseStudiesPage() {
                               <div className="text-emerald-400">{metric.icon}</div>
                               <span className="text-lg font-bold text-emerald-400">{metric.value}</span>
                             </div>
-                            <div className="text-xs text-gray-400">{metric.label}</div>
+                            <div className="text-xs text-gray-300">{metric.label}</div>
                           </div>
                         ))}
                       </div>

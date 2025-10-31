@@ -139,8 +139,8 @@ export default function AboutPage() {
             <Badge className="mb-6 bg-webelio-secondary/20 text-webelio-secondary border-webelio-secondary/30">
               About Webelio
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold text-webelio-secondary mb-6">Crafting Digital Excellence</h1>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">Crafting Digital Excellence</h1>
+            <p className="text-xl text-gray-200 max-w-3xl mx-auto mb-8">
               We are a passionate team of innovators, designers, and developers dedicated to transforming ideas into
               powerful digital solutions.
             </p>
@@ -163,8 +163,8 @@ export default function AboutPage() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-webelio-secondary/20 rounded-full mb-4">
                   <stat.icon className="w-8 h-8 text-webelio-secondary" />
                 </div>
-                <div className="text-3xl font-bold text-webelio-secondary mb-2">{stat.value}</div>
-                <div className="text-gray-300">{stat.label}</div>
+                <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
+                <div className="text-gray-200">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -180,9 +180,9 @@ export default function AboutPage() {
                 <CardContent className="p-8">
                   <div className="flex items-center mb-6">
                     <Target className="w-8 h-8 text-webelio-secondary mr-3" />
-                    <h2 className="text-3xl font-bold text-webelio-secondary">Our Mission</h2>
+                    <h2 className="text-3xl font-bold text-white">Our Mission</h2>
                   </div>
-                  <p className="text-gray-300 text-lg leading-relaxed">
+                  <p className="text-gray-200 text-lg leading-relaxed">
                     At Webelio, our mission is to craft impactful, scalable, and future-ready digital solutions across
                     mobile, web, IoT, AI/ML, and cybersecurity. We aim to bridge the gap between ideas and innovation by
                     delivering world-class products that combine exceptional design, robust engineering, and strategic
@@ -201,9 +201,9 @@ export default function AboutPage() {
                 <CardContent className="p-8">
                   <div className="flex items-center mb-6">
                     <Eye className="w-8 h-8 text-webelio-secondary mr-3" />
-                    <h2 className="text-3xl font-bold text-webelio-secondary">Our Vision</h2>
+                    <h2 className="text-3xl font-bold text-white">Our Vision</h2>
                   </div>
-                  <p className="text-gray-300 text-lg leading-relaxed">
+                  <p className="text-gray-200 text-lg leading-relaxed">
                     To be a global leader in innovative technology solutions, empowering businesses and individuals
                     through cutting-edge software, intelligent automation, and seamless digital experiences.
                   </p>
@@ -223,8 +223,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-webelio-secondary mb-4">Meet Our Amazing Team</h2>
-            <p className="text-xl text-gray-300">The brilliant minds behind Webelio's success</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Meet Our Amazing Team</h2>
+            <p className="text-xl text-gray-200">The brilliant minds behind Webelio's success</p>
           </motion.div>
 
           <motion.div
@@ -236,8 +236,8 @@ export default function AboutPage() {
             <Image src="/images/team/full-team-photo.jpg" alt="Webelio Team" fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-webelio-primary/80 via-transparent to-transparent" />
             <div className="absolute bottom-8 left-8 right-8 text-center">
-              <h3 className="text-2xl md:text-3xl font-bold text-webelio-secondary mb-2">Team Webelio 2024</h3>
-              <p className="text-gray-300">United by passion, driven by innovation</p>
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Team Webelio 2024</h3>
+              <p className="text-gray-200">United by passion, driven by innovation</p>
             </div>
           </motion.div>
         </div>
@@ -252,8 +252,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-webelio-secondary mb-4">Our Founders</h2>
-            <p className="text-xl text-gray-300">Visionary leaders driving innovation</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Our Founders</h2>
+            <p className="text-xl text-gray-200">Visionary leaders driving innovation</p>
           </motion.div>
 
           <div className="flex justify-center gap-12">
@@ -277,8 +277,8 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-webelio-secondary mb-2">{founder.name}</h3>
-                <p className="text-webelio-secondary/80 text-lg font-medium">{founder.designation}</p>
+                <h3 className="text-2xl font-bold text-white mb-2">{founder.name}</h3>
+                <p className="text-gray-200 text-lg font-medium">{founder.designation}</p>
               </motion.div>
             ))}
           </div>
@@ -294,8 +294,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold text-webelio-secondary mb-4">Our Team</h2>
-            <p className="text-xl text-gray-300">Talented professionals making it happen</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Our Team</h2>
+            <p className="text-xl text-gray-200">Talented professionals making it happen</p>
           </motion.div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
@@ -319,10 +319,10 @@ export default function AboutPage() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-webelio-secondary mb-1 group-hover:text-webelio-secondary/90 transition-colors">
+                <h3 className="text-lg font-semibold text-white mb-1 group-hover:text-webelio-secondary transition-colors">
                   {member.name}
                 </h3>
-                <p className="text-gray-300 text-sm">{member.designation}</p>
+                <p className="text-gray-200 text-sm">{member.designation}</p>
               </motion.div>
             ))}
           </div>
@@ -333,8 +333,8 @@ export default function AboutPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <h2 className="text-4xl font-bold text-webelio-secondary mb-6">Ready to Work With Us?</h2>
-            <p className="text-xl text-gray-300 mb-8">
+            <h2 className="text-4xl font-bold text-white mb-6">Ready to Work With Us?</h2>
+            <p className="text-xl text-gray-200 mb-8">
               Let's collaborate and bring your digital vision to life with our expert team.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
