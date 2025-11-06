@@ -261,10 +261,10 @@ export default function ConsultationPage() {
   ]
 
   const budgetRanges = [
-    { id: "5k-25k", label: "$5K - $25K", description: "Small projects", icon: "💡" },
-    { id: "25k-100k", label: "$25K - $100K", description: "Medium solutions", icon: "🚀" },
-    { id: "100k-500k", label: "$100K - $500K", description: "Enterprise", icon: "🏢" },
-    { id: "500k+", label: "$500K+", description: "Transformation", icon: "⭐" },
+    { id: "1-10lakhs", label: "1 - 10 Lakhs", description: "Small Projects", icon: "💡" },
+    { id: "10-50lakhs", label: "10 - 50 Lakhs", description: "Medium Projects", icon: "🚀" },
+    { id: "50lakhs-1cr", label: "50 Lakhs - 1 Cr.", description: "Enterprise Projects", icon: "🏢" },
+    { id: "1cr+", label: "1 crore +", description: "Transformation", icon: "⭐" },
   ]
 
   const timelines = [

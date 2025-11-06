@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
 import { CodeRain } from "@/components/code-rain"
+
 import {
   MessageCircle,
   Search,
@@ -268,7 +269,16 @@ export default function ProcessPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-background text-foreground relative overflow-hidden">
+    <main className="min-h-screen bg-background text-foreground relative overflow-hidden process-page">
+      <style dangerouslySetInnerHTML={{ __html: `
+        /* Apply #ffcc66 color to all icons in process page */
+        .process-page svg {
+          color: #ffcc66 !important;
+        }
+        .process-page svg[class*="text-primary"] {
+          color: #ffcc66 !important;
+        }
+      `}} />
       <div className="absolute inset-0 z-0">
         <CodeRain />
       </div>

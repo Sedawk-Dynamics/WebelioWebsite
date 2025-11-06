@@ -23,6 +23,8 @@ import {
   Newspaper,
   Settings,
   Share2,
+  AtSign,
+  ChartNoAxesCombined,
   MessageSquare,
   Shield,
 } from "lucide-react"
@@ -45,7 +47,8 @@ const deliverables = [
   { icon: Newspaper, title: "News Publications", description: "4 major news sites" },
   { icon: Settings, title: "1 Year AMC & Hosting", description: "Complete maintenance" },
   { icon: Globe, title: "Google Business Profile", description: "Local SEO setup" },
-  { icon: Share2, title: "Social Media Setup", description: "4 platforms + 12 posts" },
+  { icon: AtSign, title: "Social Media Setup", description: "4 platforms + 12 posts" },
+  { icon: ChartNoAxesCombined, title: "Social Media Followers", description: "3k+ Assured Followers" },
   { icon: FileText, title: "HR Documents", description: "3000+ templates" },
   { icon: Smartphone, title: "Mobile Application", description: "Webview app ready" },
 ]
@@ -59,7 +62,7 @@ const advantages = [
   {
     icon: DollarSign,
     title: "Save Up to 80% Cost",
-    description: "Get everything at ₹50,000 instead of ₹2,00,000+ from multiple vendors.",
+    description: "Get everything at ₹60,000 instead of ₹2,00,000+ from multiple vendors.",
   },
   {
     icon: Clock,
@@ -88,40 +91,40 @@ const testimonials = [
     quote: "Webelio gave our startup a professional identity overnight.",
     description:
       "We were struggling to even get a logo and website done on time. With Webelio SDK, we had our entire online presence — website, emails, CRM, HR tools — ready in just 12 days. Our clients started taking us seriously the moment they saw our branding.",
-    author: "Richa Sharma",
-    role: "Founder, GreenBasket Organics",
+    author: "Satish Doke",
+    role: "Founder, Germsol Pest Services Pvt Ltd",
     rating: 5,
   },
   {
     quote: "From idea to brand launch in under 2 weeks — unbelievable!",
     description:
       "As a first-time founder, I didn't even know what tools I needed. Webelio handled everything — from logo to Google Business to mobile app. They literally became our digital partner.",
-    author: "Aditya Rao",
-    role: "CEO, FitBrew Café",
+    author: "Sai Kiran Reddy",
+    role: "Director, Aivirtrix",
     rating: 5,
   },
   {
     quote: "Saved over ₹1.5 lakh in setup cost — and got 10x value.",
     description:
       "Earlier we had quotes from multiple vendors crossing ₹2 lakh. Webelio gave us everything for ₹50k — CRM, HRM, Billing, PR, everything integrated. Our digital presence went from zero to professional in no time.",
-    author: "Priya Mehta",
-    role: "Director, WorkWave HR Pvt. Ltd.",
+    author: "Mohammed Irfan",
+    role: "Director, MagnaAura Consultancy Pvt Ltd",
     rating: 5,
   },
   {
     quote: "We got investor attention after our press releases.",
     description:
       "The PR articles Webelio arranged for us gave our brand visibility we never imagined. Investors started reaching out within weeks. It gave our startup credibility at an early stage.",
-    author: "Rajesh Patel",
-    role: "Founder, EcoCharge EV",
+    author: "Varun Jindal",
+    role: "Founder, Alvineient Consultant",
     rating: 5,
   },
   {
     quote: "One vendor, one renewal — total peace of mind.",
     description:
       "Earlier we had 6 different subscriptions. Webelio SDK replaced them all. Now everything — hosting, emails, HR, billing, support — renews together at a fraction of cost.",
-    author: "Sneha Nair",
-    role: "COO, BharatEquip Traders",
+    author: "Abhiram Sripathy",
+    role: "Founder, Thurro by Adqvest Capital Pvt Ltd",
     rating: 5,
   },
 ]
@@ -185,14 +188,14 @@ export default function StartupKitPage() {
             <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#FFCC66] to-transparent mx-auto"></div>
 
             <p className="text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Go from idea to fully launched brand in just <span className="text-[#FFCC66] font-semibold">15 days</span>
+              Go from idea to fully launched brand in just <span className="text-[#FFCC66] font-semibold">30 days</span>
               . Everything your startup needs to establish a powerful digital presence.
             </p>
 
             <div className="pt-8">
               <div className="inline-flex flex-col items-center gap-4">
                 <div className="text-center">
-                  <div className="text-5xl sm:text-6xl font-bold text-[#FFCC66]">₹50,000</div>
+                  <div className="text-5xl sm:text-6xl font-bold text-[#FFCC66]">₹60,000</div>
                   <div className="text-gray-400 mt-2">All-inclusive for 1 year</div>
                   <div className="text-sm text-gray-500 mt-1">Renewal: ₹10,000/year</div>
                 </div>
@@ -377,7 +380,7 @@ export default function StartupKitPage() {
                     <td className="p-6 text-white font-bold text-lg">Total Value</td>
                     <td className="p-6 text-gray-300 font-semibold">₹1,75,000 – ₹2,80,000</td>
                     <td className="p-6 text-center">
-                      <div className="text-[#FFCC66] font-bold text-2xl">₹50,000</div>
+                      <div className="text-[#FFCC66] font-bold text-2xl">₹60,000</div>
                       <div className="text-sm text-gray-400 mt-1">Save 70-80%</div>
                     </td>
                   </tr>
@@ -508,7 +511,7 @@ export default function StartupKitPage() {
             </div>
 
             <div className="pt-8 text-sm text-gray-500">
-              Limited-Time Offer: ₹50,000 (All-Inclusive for 1 Year) • Renewal: ₹10,000/year
+              Limited-Time Offer: ₹60,000 (All-Inclusive for 1 Year) • Renewal: ₹10,000/year
             </div>
           </motion.div>
         </div>

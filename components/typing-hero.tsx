@@ -9,13 +9,14 @@ export function TypingHero() {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const texts = [
+    "Your Company's Digital Presence",
     "Mobile Applications",
-    "Web Development",
-    "IoT Solutions",
-    "AI/ML Systems",
-    "Cybersecurity",
-    "UI/UX Design",
-    "Digital Transformation",
+    "Website Development",
+    "Branding & Creatives",
+    "Enterprise Grade Softwares",
+    "Custom ERP Solutions",
+    "AI/ML Solutions",
+    "Embedded and IOT Solutions"
   ]
 
   useEffect(() => {

@@ -86,10 +86,10 @@ export function BusinessProfileHeader() {
 
   const formatBudget = (id: string) => {
     const budgets: Record<string, string> = {
-      "5k-25k": "$5K - $25K",
-      "25k-100k": "$25K - $100K",
-      "100k-500k": "$100K - $500K",
-      "500k+": "$500K+",
+      "1-10lakhs": "1 - 10 Lakhs",
+      "10-50lakhs": "10 - 50 Lakhs",
+      "50lakhs-1cr": "50 Lakhs - 1 Cr.",
+      "1cr+": "1 crore +",
     }
     return budgets[id] || id
   }

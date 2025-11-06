@@ -103,7 +103,7 @@ export function ExpertiseSection(): ReactElement {
                 <div className="flex items-center space-x-3">
                   <h2 className="text-2xl font-bold">WEBELIO™</h2>
                   <motion.div
-                    className="flex items-center justify-center w-8 h-8 rounded-full bg-webelio-secondary text-webelio-primary text-xs font-bold"
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-webelio-secondary text-webelio-primary text-xs font-bold"
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
                   >
@@ -185,7 +185,7 @@ export function ExpertiseSection(): ReactElement {
                       className="px-3 py-1.5 bg-gradient-to-r from-gray-500/10 to-gray-500/5 border border-gray-500/20 rounded-full text-gray-400 text-xs flex items-center space-x-1 shadow-sm hover:shadow-md transition-shadow"
                     >
                       <Users className="w-3 h-3" />
-                      <span className="font-medium">25+ Team Members</span>
+                      <span className="font-medium">150+ Team Members</span>
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, scale: 0 }}

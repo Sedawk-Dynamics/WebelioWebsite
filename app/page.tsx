@@ -4,7 +4,6 @@ import Link from "next/link"
 import { CodeRain } from "@/components/code-rain"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
-import { PoweredByBadge } from "@/components/powered-by-badge"
 import { ExpertiseSection } from "@/components/expertise-section"
 import { SpinningEarth } from "@/components/spinning-earth"
 import { TypingHero } from "@/components/typing-hero"
@@ -40,7 +39,7 @@ export default function Home() {
             filter: "contrast(1.2) brightness(0.7) grayscale(100%)",
           }}
         >
-          <source src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Untitled%20video%20-%20Made%20with%20Clipchamp%20%283%29%20%281%29%20%282%29%20%282%29-i8U3zTcWrQss8nKM5ekseP7qFR5KVP.mp4" type="video/mp4" />
+          <source src="https://s3.ap-south-1.amazonaws.com/sikarwarbucket/Webelio_Hero_Section_Video_Generation.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -53,10 +52,6 @@ export default function Home() {
         {/* Hero section with better contrast */}
         <section className="flex flex-col items-center justify-center min-h-[90vh] px-4 sm:px-6">
           <div className="max-w-4xl mx-auto text-center space-y-6">
-            <div className="mb-8">
-              <PoweredByBadge />
-            </div>
-
             {/* Enhanced hero with better contrast */}
             <div className="relative">
               {/* Background for better contrast in light mode */}
@@ -72,8 +67,8 @@ export default function Home() {
             <div className="relative">
               <div className="absolute inset-0 bg-background/60 dark:bg-transparent rounded-xl blur-2xl"></div>
               <p className="relative z-10 text-muted-foreground max-w-xl mx-auto font-medium">
-                Crafting impactful, scalable, and future-ready digital solutions across mobile, web, IoT, AI/ML, and
-                cybersecurity for businesses worldwide.
+                Crafting impactful, scalable, and future-ready digital solutions across Web, Mobile, IoT, AI/ML, and
+                Cloud for businesses worldwide.
               </p>
             </div>
 
