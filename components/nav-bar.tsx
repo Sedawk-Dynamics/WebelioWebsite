@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { Menu, X, Monitor, Zap } from "lucide-react"
+import { Menu, X, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LanguageSelector } from "@/components/language-selector"
 import { useLanguage } from "@/contexts/language-context"
@@ -75,13 +75,6 @@ export function NavBar() {
           {/* Right side items - Desktop */}
           <div className="hidden lg:flex items-center space-x-4">
             <LanguageSelector />
-            <Link
-              href="/corporate-login"
-              onClick={scrollToTop}
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              <Monitor className="w-5 h-5" />
-            </Link>
             <Link href="/consultation" onClick={scrollToTop}>
               <Button className="bg-gradient-to-r from-webelio-tertiary to-webelio-secondary hover:from-webelio-tertiary/80 hover:to-webelio-secondary/80 text-webelio-primary font-medium">
                 <Zap className="w-4 h-4 mr-2" />

@@ -690,7 +690,7 @@ export default function ConsultationPage() {
                             value={consultationData.phone}
                             onChange={(e) => setConsultationData({ ...consultationData, phone: e.target.value })}
                             className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
-                            placeholder="+1 (555) 123-4567"
+                            placeholder="+91 9876543210"
                           />
                         </div>
                       </div>
@@ -743,19 +743,6 @@ export default function ConsultationPage() {
                           },
                         }}
                       />
-                    </div>
-
-                    <div className="text-center">
-                      <Button
-                        onClick={() => {
-                          setShowCalendly(false)
-                          window.location.href = "/dashboard"
-                        }}
-                        variant="outline"
-                        className="border-gray-600 text-gray-300 hover:bg-gray-800"
-                      >
-                        Continue to Dashboard
-                      </Button>
                     </div>
                   </div>
                 )}
