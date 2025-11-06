@@ -81,3 +81,362 @@ html,
 body {
   overflow-x: hidden;
 }
+
+/* Calendly widget transparent background - target main container divs */
+.calendly-widget-wrapper > div {
+  background: transparent !important;
+}
+
+/* Target Calendly's container attributes */
+div[data-container="booking-container"],
+div[data-container="layout-container"],
+div[data-id="layout-container"] {
+  background: transparent !important;
+}
+
+/* Target Calendly's main container classes (dynamic class names from user's HTML) */
+div._cUP1np9gMvFQrcPftuf,
+div.OGcBAyJGBej5Gnyi9hGA,
+div.xahN8AEzyAvQtVj17TPv,
+div._Y8HCTxgNkwxXcG_DCXx {
+  background: transparent !important;
+}
+
+/* Target Calendly's inner layout containers */
+div._3efP_GeH5kyBAzqnLzL,
+div.adpQ3VUeQbmczOdx9ymw,
+div.w_Mtb2W9166EgOSv9i3M,
+div.cllbjvXCdYDt9A3te4cz {
+  background: transparent !important;
+}
+
+/* Hide Calendly branding - target the anchor and all branding elements */
+.calendly-widget-wrapper a[href*="calendly.com"][href*="utm_medium=badge"],
+.calendly-widget-wrapper a.VJL48qbQzWENTFAh1Knk,
+.calendly-widget-wrapper a.e9TS9yoMqqIN2PqBo1QG,
+.calendly-widget-wrapper a._i6SG2jlTfccH2ZZblil,
+.calendly-widget-wrapper div[data-id="branding"],
+.calendly-widget-wrapper div.jWSwi_R_Xl7kPjUhuQoo,
+.calendly-widget-wrapper div._igrKj_5lj_5nWQu8DPw,
+.calendly-widget-wrapper div.V7YfvNqWv0XKYKys7N7K,
+.calendly-widget-wrapper div.__d5yUqDgBEjoX7J2dql,
+.calendly-widget-wrapper div.HvybhIo63ZbBJxHh7Ann,
+.calendly-widget-wrapper div.RK3ps09FjZwzHTaYDakl,
+a[href*="calendly.com"][href*="utm_medium=badge"],
+a.VJL48qbQzWENTFAh1Knk,
+a.e9TS9yoMqqIN2PqBo1QG,
+a._i6SG2jlTfccH2ZZblil,
+div[data-id="branding"],
+div.jWSwi_R_Xl7kPjUhuQoo,
+div._igrKj_5lj_5nWQu8DPw,
+div.V7YfvNqWv0XKYKys7N7K,
+div.__d5yUqDgBEjoX7J2dql,
+div.HvybhIo63ZbBJxHh7Ann,
+div.RK3ps09FjZwzHTaYDakl {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Calendly Widget Theme Styling - Match Website Theme */
+.calendly-widget-wrapper {
+  /* Main container backgrounds - dark theme */
+  div[data-id="layout-container"],
+  div[data-container="booking-container"],
+  div[data-container="layout-container"],
+  div._3efP_GeH5kyBAzqnLzL,
+  div.adpQ3VUeQbmczOdx9ymw,
+  div.w_Mtb2W9166EgOSv9i3M,
+  div.cllbjvXCdYDt9A3te4cz {
+    background: transparent !important;
+    color: rgb(255, 255, 255) !important;
+  }
+
+  /* Side panel - dark background */
+  div[data-container="side-panel"],
+  div.WrdpezlzjKu1CoRihaXS,
+  div.Rb2e9IwsOFiKlSQIX7YA,
+  div._eIcko0LuRzVhqMC1mmy,
+  div.y2BHUjkNYLaMI5GB_dVt {
+    background: rgba(17, 24, 39, 0.5) !important;
+    backdrop-filter: blur(12px) !important;
+    border-right: 1px solid rgba(75, 85, 99, 0.3) !important;
+  }
+
+  /* Main panel - dark background */
+  div.booking-kit_main-panel_35dac99d,
+  div.booking-kit_main-panel-is-desktop-up_409c0900,
+  div.Pl9F4D0kOr1s0KUQ1VhD,
+  div.vKWuVZfizOkGTEh1T9he,
+  div.PRlx_aGn2CIKvSPG5Y3G {
+    background: transparent !important;
+  }
+
+  /* Text colors - white/light gray */
+  h1, h2, h3, h4, h5, h6,
+  div.booking-kit_name_67b86211,
+  h1.booking-kit_event-type-name_6f05121d,
+  h2.ti1agus,
+  h2.t6ilk29,
+  span.t1850o97,
+  span.t7sc041,
+  span.tneybjo {
+    color: rgb(255, 255, 255) !important;
+  }
+
+  /* Labels - light gray */
+  label.ls9i9qr,
+  div.c8wotgg label {
+    color: rgb(209, 213, 219) !important;
+  }
+
+  /* Required asterisk - emerald */
+  span.szghqnp {
+    color: rgb(16, 185, 129) !important;
+  }
+
+  /* Input fields - dark theme matching website */
+  input.i167bxqy,
+  input.i1uya22c,
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"] {
+    background: rgba(31, 41, 55, 0.5) !important;
+    border: 1px solid rgba(75, 85, 99, 0.5) !important;
+    border-radius: 0.5rem !important;
+    color: rgb(255, 255, 255) !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.2s !important;
+  }
+
+  input.i167bxqy:focus,
+  input.i1uya22c:focus,
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="tel"]:focus {
+    border-color: rgb(16, 185, 129) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+  }
+
+  input.i167bxqy::placeholder,
+  input.i1uya22c::placeholder,
+  input[type="text"]::placeholder,
+  input[type="email"]::placeholder,
+  input[type="tel"]::placeholder {
+    color: rgb(156, 163, 175) !important;
+  }
+
+  /* Buttons - emerald primary color */
+  button.uvkj3lh,
+  button.bzua8jl,
+  button.dyxacjh,
+  button.sbsarjr,
+  button[type="submit"],
+  button[type="button"] {
+    background: linear-gradient(to right, rgb(16, 185, 129), rgb(34, 197, 94)) !important;
+    color: rgb(255, 255, 255) !important;
+    border: none !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 500 !important;
+    transition: all 0.2s !important;
+    cursor: pointer !important;
+  }
+
+  button.uvkj3lh:hover,
+  button.bzua8jl:hover,
+  button.dyxacjh:hover,
+  button.sbsarjr:hover,
+  button[type="submit"]:hover,
+  button[type="button"]:hover:not(:disabled) {
+    background: linear-gradient(to right, rgb(5, 150, 105), rgb(22, 163, 74)) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+  }
+
+  button.uvkj3lh:disabled,
+  button.bzua8jl:disabled,
+  button.dyxacjh:disabled,
+  button.sbsarjr:disabled,
+  button[type="submit"]:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+  }
+
+  /* Secondary buttons (Add Guests, Cookie settings) */
+  button.soq3ksa,
+  button.f1tj3z0k {
+    background: rgba(31, 41, 55, 0.5) !important;
+    border: 1px solid rgba(75, 85, 99, 0.5) !important;
+    color: rgb(209, 213, 219) !important;
+  }
+
+  button.soq3ksa:hover,
+  button.f1tj3z0k:hover {
+    background: rgba(31, 41, 55, 0.8) !important;
+    border-color: rgba(75, 85, 99, 0.8) !important;
+  }
+
+  /* Navigation button (back button) */
+  button.booking-kit_button_59b1e549 {
+    color: rgb(255, 255, 255) !important;
+    background: rgba(31, 41, 55, 0.5) !important;
+    border: 1px solid rgba(75, 85, 99, 0.5) !important;
+    border-radius: 0.5rem !important;
+  }
+
+  button.booking-kit_button_59b1e549:hover {
+    background: rgba(31, 41, 55, 0.8) !important;
+    border-color: rgb(16, 185, 129) !important;
+  }
+
+  /* Details items - light text */
+  div.booking-kit_details-item_42f7390e,
+  div.booking-kit_styled-location_0af6caf8,
+  span.__trdF9jFB1QpBhkUGiN,
+  span.t_3_V_cX54ZJ2vS2wbMX {
+    color: rgb(209, 213, 219) !important;
+  }
+
+  /* Icons - emerald color */
+  svg[data-id="details-item-icon"],
+  svg[data-testid="web-conference-icon"],
+  span.b15h8fme svg {
+    color: rgb(16, 185, 129) !important;
+  }
+
+  /* Form container */
+  form,
+  div.WLaMxNOB4isWwABO5Fyw,
+  div._5foOb4drJjYf81uUkWv {
+    background: transparent !important;
+  }
+
+  /* Fieldset */
+  fieldset.Ca8ZXPhzUYH7_QjqmRim,
+  fieldset.ZailmwkOvrZPJqhYNv2b {
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  /* Question components */
+  div._XcSYbldo6PBKK04XdZx,
+  div.smoY8RxA6xs8LaouvqHy {
+    background: transparent !important;
+  }
+
+  /* Links - emerald color */
+  a.uvkj3lh,
+  a.bzut2io,
+  a.vvo24n0,
+  a.zNwnG9QHYOI7x5WXkAJw,
+  a._1raeB5Vm3N8JnR_1fcx {
+    color: rgb(16, 185, 129) !important;
+    text-decoration: underline !important;
+  }
+
+  a.uvkj3lh:hover,
+  a.bzut2io:hover,
+  a.vvo24n0:hover,
+  a.zNwnG9QHYOI7x5WXkAJw:hover,
+  a._1raeB5Vm3N8JnR_1fcx:hover {
+    color: rgb(5, 150, 105) !important;
+  }
+
+  /* Terms and privacy notice */
+  div._Ms_48sT5lC1w59SJT1K,
+  div.rept8JLe1nQflKIQAszR {
+    color: rgb(156, 163, 175) !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Scrollbar styling */
+  div.simplebar-scrollbar {
+    background: rgba(75, 85, 99, 0.5) !important;
+  }
+
+  div.simplebar-scrollbar:hover {
+    background: rgba(16, 185, 129, 0.5) !important;
+  }
+
+  /* Cookie settings button */
+  div.Pz2TGUG_nAL6m_qTt_A4,
+  div._Y9jfPKOHyKOzqzq0C1V {
+    background: transparent !important;
+  }
+
+  /* Container backgrounds */
+  div.Z3zhp7CS7tNsCSX6_KJW,
+  div.KtQUtHvVvyq716gdA29c,
+  div.__JJrET9Zts62zw0MIPL,
+  div.Hl8alPNUMZI6wp5bmNRn,
+  div.tn5Xb5vAgjr9spv6HYeI,
+  div.booking-kit_container_a9035085,
+  div.booking-kit_container-reduced-view_1c4f4dfc,
+  div.booking-kit_details-container_bf18cd70,
+  div.ifJeiq6kt2UOH4Uas81Y,
+  div.MZgElle2ifGsTnWpJ3fp {
+    background: transparent !important;
+  }
+
+  /* Input wrapper */
+  div.b15h8fme,
+  div.d1dzuwnm {
+    background: transparent !important;
+  }
+
+  /* Icon wrappers */
+  div.booking-kit_icon-wrapper_11c88a70,
+  div.booking-kit_icon-wrapper_de4ce563,
+  div.booking-kit_icon-column_4d37d7fd {
+    background: transparent !important;
+  }
+
+  /* Generic selectors for dynamic Calendly classes */
+  /* All text elements should be white/light */
+  * {
+    color: inherit;
+  }
+
+  /* All input-like elements */
+  input,
+  textarea,
+  select {
+    background: rgba(31, 41, 55, 0.5) !important;
+    border: 1px solid rgba(75, 85, 99, 0.5) !important;
+    border-radius: 0.5rem !important;
+    color: rgb(255, 255, 255) !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: rgb(16, 185, 129) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+  }
+
+  /* All buttons should have emerald theme unless specifically styled */
+  button:not(.soq3ksa):not(.f1tj3z0k):not(.booking-kit_button_59b1e549) {
+    background: linear-gradient(to right, rgb(16, 185, 129), rgb(34, 197, 94)) !important;
+    color: rgb(255, 255, 255) !important;
+  }
+
+  button:not(.soq3ksa):not(.f1tj3z0k):not(.booking-kit_button_59b1e549):hover:not(:disabled) {
+    background: linear-gradient(to right, rgb(5, 150, 105), rgb(22, 163, 74)) !important;
+  }
+
+  /* All links should be emerald */
+  a {
+    color: rgb(16, 185, 129) !important;
+  }
+
+  a:hover {
+    color: rgb(5, 150, 105) !important;
+  }
+}

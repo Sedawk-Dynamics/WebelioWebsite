@@ -90,6 +90,56 @@ export default function ConsultationPage() {
     }
   }, [consultationData])
 
+  // Hide Calendly branding when widget loads
+  useEffect(() => {
+    if (!showCalendly) return
+
+    const hideBranding = () => {
+      // Try multiple selectors to find and hide the branding
+      const selectors = [
+        'div[data-id="branding"]',
+        'a[href*="calendly.com"][href*="utm_medium=badge"]',
+        'a.VJL48qbQzWENTFAh1Knk',
+        '.jWSwi_R_Xl7kPjUhuQoo',
+        '._igrKj_5lj_5nWQu8DPw',
+      ]
+
+      selectors.forEach((selector) => {
+        const elements = document.querySelectorAll(selector)
+        elements.forEach((el) => {
+          if (el instanceof HTMLElement) {
+            el.style.display = 'none'
+            el.style.visibility = 'hidden'
+            el.style.opacity = '0'
+            el.style.height = '0'
+            el.style.width = '0'
+            el.style.overflow = 'hidden'
+            el.style.pointerEvents = 'none'
+          }
+        })
+      })
+    }
+
+    // Hide immediately and then check periodically as widget loads
+    hideBranding()
+    const interval = setInterval(hideBranding, 100)
+
+    // Also listen for DOM changes
+    const observer = new MutationObserver(hideBranding)
+    const wrapper = document.querySelector('.calendly-widget-wrapper')
+    if (wrapper) {
+      observer.observe(wrapper, {
+        childList: true,
+        subtree: true,
+      })
+    }
+
+    return () => {
+      clearInterval(interval)
+      observer.disconnect()
+    }
+  }, [showCalendly])
+
   const steps = [
     { id: "business", title: "Business", icon: Building, color: "emerald" },
     { id: "size", title: "Size", icon: Users, color: "blue" },
@@ -675,7 +725,7 @@ export default function ConsultationPage() {
                       <p className="text-gray-400">Select a time that works best for you</p>
                     </div>
 
-                    <div className="w-full" style={{ minHeight: "700px" }}>
+                    <div className="w-full calendly-widget-wrapper" style={{ minHeight: "700px" }}>
                       <InlineWidget
                         url={CALENDLY_URL}
                         styles={{
