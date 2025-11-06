@@ -64,6 +64,7 @@ export default function ConsultationPage() {
   })
 
   // Calendly URL - Replace with your actual Calendly URL
+  // Set this in your .env.local file as: NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/your-username/consultation
   const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/your-username/consultation"
  
 
@@ -76,8 +77,10 @@ export default function ConsultationPage() {
       companySize: consultationData.companySize,
       budget: consultationData.budget,
       timeline: consultationData.timeline,
+      goals: consultationData.goals.join(", "),
       contactName: consultationData.name,
       email: consultationData.email,
+      phone: consultationData.phone,
     }
 
     // Show dropdown when user starts filling data
@@ -687,19 +690,23 @@ export default function ConsultationPage() {
                           textColor: "ffffff",
                         }}
                         prefill={{
+                          // Basic contact info (automatically pre-filled by Calendly)
                           name: consultationData.name || undefined,
                           email: consultationData.email || undefined,
                           firstName: consultationData.name?.split(" ")[0] || undefined,
                           lastName: consultationData.name?.split(" ").slice(1).join(" ") || undefined,
+                          // Custom questions - These MUST match the question keys configured in your Calendly event type
+                          // IMPORTANT: Configure these 8 custom questions in your Calendly event type settings
+                          // Question keys must be: a1, a2, a3, a4, a5, a6, a7, a8
                           customAnswers: {
-                            a1: consultationData.company || undefined,
-                            a2: consultationData.phone || undefined,
-                            a3: consultationData.businessType || undefined,
-                            a4: consultationData.companySize || undefined,
-                            a5: consultationData.projectType.join(", ") || undefined,
-                            a6: consultationData.budget || undefined,
-                            a7: consultationData.timeline || undefined,
-                            a8: consultationData.goals.join(", ") || undefined,
+                            a1: consultationData.company || undefined, // Question: "Company Name"
+                            a2: consultationData.phone || undefined, // Question: "Phone Number"
+                            a3: consultationData.businessType || undefined, // Question: "Business Type"
+                            a4: consultationData.companySize || undefined, // Question: "Company Size"
+                            a5: consultationData.projectType.join(", ") || undefined, // Question: "Services Needed"
+                            a6: consultationData.budget || undefined, // Question: "Budget Range"
+                            a7: consultationData.timeline || undefined, // Question: "Timeline"
+                            a8: consultationData.goals.join(", ") || undefined, // Question: "Business Goals"
                           },
                         }}
                       />

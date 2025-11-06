@@ -12,8 +12,10 @@ type ProfileData = {
   companySize?: string
   budget?: string
   timeline?: string
+  goals?: string
   contactName?: string
   email?: string
+  phone?: string
 }
 
 export function BusinessProfileHeader() {
@@ -55,24 +57,118 @@ export function BusinessProfileHeader() {
   }, [])
 
   const getCompletionPercentage = () => {
-    const totalFields = 8
+    const totalFields = 9 // All 7 steps: businessType, companySize, service, budget, timeline, goals, contact (name, email, phone)
     const filledFields = Object.values(profileData).filter((value) => value && value.trim() !== "").length
     return Math.round((filledFields / totalFields) * 100)
   }
 
   const completionPercentage = getCompletionPercentage()
 
+  const formatBusinessType = (id: string) => {
+    const types: Record<string, string> = {
+      startup: "Startup",
+      smb: "Small Business",
+      enterprise: "Enterprise",
+      agency: "Agency",
+    }
+    return types[id] || id
+  }
+
+  const formatCompanySize = (id: string) => {
+    const sizes: Record<string, string> = {
+      "1-10": "1-10 employees",
+      "11-50": "11-50 employees",
+      "51-200": "51-200 employees",
+      "200+": "200+ employees",
+    }
+    return sizes[id] || id
+  }
+
+  const formatBudget = (id: string) => {
+    const budgets: Record<string, string> = {
+      "5k-25k": "$5K - $25K",
+      "25k-100k": "$25K - $100K",
+      "100k-500k": "$100K - $500K",
+      "500k+": "$500K+",
+    }
+    return budgets[id] || id
+  }
+
+  const formatTimeline = (id: string) => {
+    const timelines: Record<string, string> = {
+      asap: "ASAP",
+      "1-3months": "1-3 months",
+      "3-6months": "3-6 months",
+      "6months+": "6+ months",
+    }
+    return timelines[id] || id
+  }
+
+  const formatGoals = (goalsString: string) => {
+    const goals: Record<string, string> = {
+      "increase-sales": "Increase Sales",
+      "improve-efficiency": "Improve Efficiency",
+      "expand-market": "Expand Market",
+      "reduce-costs": "Reduce Costs",
+      modernize: "Modernize Ops",
+      "competitive-advantage": "Competitive Edge",
+    }
+    return goalsString
+      .split(", ")
+      .map((id) => goals[id.trim()] || id.trim())
+      .join(", ")
+  }
+
+  const formatServices = (servicesString: string) => {
+    const services: Record<string, string> = {
+      website: "Website Development",
+      mobile: "Mobile App",
+      digital: "Digital Systems",
+      mechanical: "Mechanical Engineering",
+      product: "Product Development",
+      architecture: "Architecture Design",
+    }
+    return servicesString
+      .split(", ")
+      .map((id) => services[id.trim()] || id.trim())
+      .join(", ")
+  }
+
   const getDisplayEntries = () => {
     const entries = []
-    if (profileData.service) entries.push({ label: "Service", value: profileData.service, color: "text-emerald-400" })
-    if (profileData.businessName)
-      entries.push({ label: "Business", value: profileData.businessName, color: "text-blue-400" })
+    // Step 1: Business Type
     if (profileData.businessType)
-      entries.push({ label: "Type", value: profileData.businessType, color: "text-purple-400" })
-    if (profileData.budget) entries.push({ label: "Budget", value: profileData.budget, color: "text-yellow-400" })
-    if (profileData.timeline) entries.push({ label: "Timeline", value: profileData.timeline, color: "text-cyan-400" })
+      entries.push({
+        label: "Business Type",
+        value: formatBusinessType(profileData.businessType),
+        color: "text-emerald-400",
+      })
+    // Step 2: Company Size
+    if (profileData.companySize)
+      entries.push({
+        label: "Company Size",
+        value: formatCompanySize(profileData.companySize),
+        color: "text-blue-400",
+      })
+    // Step 3: Project Type/Services
+    if (profileData.service)
+      entries.push({ label: "Services", value: formatServices(profileData.service), color: "text-purple-400" })
+    // Step 4: Budget
+    if (profileData.budget)
+      entries.push({ label: "Budget", value: formatBudget(profileData.budget), color: "text-yellow-400" })
+    // Step 5: Timeline
+    if (profileData.timeline)
+      entries.push({ label: "Timeline", value: formatTimeline(profileData.timeline), color: "text-cyan-400" })
+    // Step 6: Goals
+    if (profileData.goals)
+      entries.push({ label: "Goals", value: formatGoals(profileData.goals), color: "text-orange-400" })
+    // Step 7: Contact Info
     if (profileData.contactName)
-      entries.push({ label: "Contact", value: profileData.contactName, color: "text-pink-400" })
+      entries.push({ label: "Name", value: profileData.contactName, color: "text-pink-400" })
+    if (profileData.email) entries.push({ label: "Email", value: profileData.email, color: "text-indigo-400" })
+    if (profileData.phone) entries.push({ label: "Phone", value: profileData.phone, color: "text-teal-400" })
+    if (profileData.businessName)
+      entries.push({ label: "Company", value: profileData.businessName, color: "text-violet-400" })
     return entries
   }
 
