@@ -57,9 +57,9 @@ export function BusinessProfileHeader() {
   }, [])
 
   const getCompletionPercentage = () => {
-    const totalFields = 9 // All 7 steps: businessType, companySize, service, budget, timeline, goals, contact (name, email, phone)
+    const totalFields = 10 // businessType, companySize, service, budget, timeline, goals, contactName, email, phone, businessName
     const filledFields = Object.values(profileData).filter((value) => value && value.trim() !== "").length
-    return Math.round((filledFields / totalFields) * 100)
+    return Math.min(100, Math.round((filledFields / totalFields) * 100))
   }
 
   const completionPercentage = getCompletionPercentage()

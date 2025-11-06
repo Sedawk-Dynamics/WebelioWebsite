@@ -27,6 +27,8 @@ import {
   Shield,
   Clock,
   Sparkles,
+  Cpu,
+  Cloud,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { InlineWidget } from "react-calendly"
@@ -198,42 +200,63 @@ export default function ConsultationPage() {
       label: "Website Development",
       icon: <Globe className="w-6 h-6" />,
       color: "emerald",
-      description: "Web applications",
+      description: "Next.js, React.js, Node.js, Express.js, Laravel, WordPress, MySQL, MongoDB",
     },
     {
       id: "mobile",
-      label: "Mobile App",
+      label: "Mobile App Development",
       icon: <Smartphone className="w-6 h-6" />,
       color: "blue",
-      description: "iOS & Android",
+      description: "Flutter, React Native, Kotlin, Jetpack Compose, Swift, SwiftUI",
     },
     {
       id: "digital",
-      label: "Digital Systems",
-      icon: <Laptop className="w-6 h-6" />,
+      label: "Digital Marketing",
+      icon: <TrendingUp className="w-6 h-6" />,
       color: "purple",
-      description: "Enterprise software",
+      description: "Google Ads, Meta Ads, Google Analytics, Tag Manager, SEO Tools, HubSpot, Semrush",
     },
     {
-      id: "mechanical",
-      label: "Mechanical Engineering",
-      icon: <Cog className="w-6 h-6" />,
-      color: "orange",
-      description: "Product design",
-    },
-    {
-      id: "product",
-      label: "Product Development",
+      id: "branding",
+      label: "Branding & Creative Design",
       icon: <Package className="w-6 h-6" />,
-      color: "cyan",
-      description: "End-to-end solutions",
+      color: "orange",
+      description: "Figma, Adobe XD, Photoshop, Illustrator, After Effects, Canva",
     },
     {
-      id: "architecture",
-      label: "Architecture Design",
-      icon: <Building2 className="w-6 h-6" />,
+      id: "ai",
+      label: "AI & Machine Learning",
+      icon: <Sparkles className="w-6 h-6" />,
+      color: "cyan",
+      description: "Python, TensorFlow, PyTorch, Scikit-learn, OpenAI API, LangChain",
+    },
+    {
+      id: "erp",
+      label: "Custom ERP Development",
+      icon: <Cog className="w-6 h-6" />,
       color: "indigo",
-      description: "Structural design",
+      description: "Node.js, Laravel, PostgreSQL, Redis, React.js, Docker, Microservices",
+    },
+    {
+      id: "enterprise",
+      label: "Enterprise Software Development",
+      icon: <Building2 className="w-6 h-6" />,
+      color: "pink",
+      description: "Java, Spring Boot, .NET Core, Angular, Kubernetes, AWS, Azure",
+    },
+    {
+      id: "embedded",
+      label: "Embedded & IoT Solutions",
+      icon: <Cpu className="w-6 h-6" />,
+      color: "teal",
+      description: "C, C++, Python, Raspberry Pi, Arduino, MQTT, AWS IoT, BLE",
+    },
+    {
+      id: "saas",
+      label: "SAAS Development",
+      icon: <Cloud className="w-6 h-6" />,
+      color: "violet",
+      description: "React.js, Next.js, Node.js, PostgreSQL, Docker, Kubernetes, AWS",
     },
   ]
 
@@ -274,7 +297,7 @@ export default function ConsultationPage() {
 
   const handleSubmit = () => {
     // Validate required fields before showing Calendly
-    if (!isGuest && (!consultationData.name || !consultationData.email)) {
+    if (!consultationData.name || !consultationData.email) {
       alert("Please fill in all required fields (Name and Email)")
       return
     }
@@ -625,93 +648,53 @@ export default function ConsultationPage() {
                       <p className="text-gray-400">Final step to unlock your strategy</p>
                     </div>
 
-                    {/* Guest Mode Toggle */}
-                    <div className="max-w-xl mx-auto mb-6">
-                      <div className="p-4 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-xl border border-emerald-500/20">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-bold text-white">Try as Guest</h3>
-                            <p className="text-gray-400 text-sm">Preview dashboard without saving info</p>
-                          </div>
-                          <button
-                            onClick={() => setIsGuest(!isGuest)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              isGuest ? "bg-emerald-500" : "bg-gray-600"
-                            }`}
-                          >
-                            <span
-                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                isGuest ? "translate-x-6" : "translate-x-1"
-                              }`}
-                            />
-                          </button>
+                    <div className="max-w-2xl mx-auto">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-300">Full Name *</label>
+                          <input
+                            type="text"
+                            value={consultationData.name}
+                            onChange={(e) => setConsultationData({ ...consultationData, name: e.target.value })}
+                            className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
+                            placeholder="Your full name"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-300">Email Address *</label>
+                          <input
+                            type="email"
+                            value={consultationData.email}
+                            onChange={(e) => setConsultationData({ ...consultationData, email: e.target.value })}
+                            className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
+                            placeholder="your@email.com"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-300">Company Name</label>
+                          <input
+                            type="text"
+                            value={consultationData.company}
+                            onChange={(e) => setConsultationData({ ...consultationData, company: e.target.value })}
+                            className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
+                            placeholder="Your company"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-300">Phone Number</label>
+                          <input
+                            type="tel"
+                            value={consultationData.phone}
+                            onChange={(e) => setConsultationData({ ...consultationData, phone: e.target.value })}
+                            className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
+                            placeholder="+1 (555) 123-4567"
+                          />
                         </div>
                       </div>
                     </div>
-
-                    {!isGuest && (
-                      <div className="max-w-2xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-300">Full Name *</label>
-                            <input
-                              type="text"
-                              value={consultationData.name}
-                              onChange={(e) => setConsultationData({ ...consultationData, name: e.target.value })}
-                              className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
-                              placeholder="Your full name"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-300">Email Address *</label>
-                            <input
-                              type="email"
-                              value={consultationData.email}
-                              onChange={(e) => setConsultationData({ ...consultationData, email: e.target.value })}
-                              className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
-                              placeholder="your@email.com"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-300">Company Name</label>
-                            <input
-                              type="text"
-                              value={consultationData.company}
-                              onChange={(e) => setConsultationData({ ...consultationData, company: e.target.value })}
-                              className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
-                              placeholder="Your company"
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-300">Phone Number</label>
-                            <input
-                              type="tel"
-                              value={consultationData.phone}
-                              onChange={(e) => setConsultationData({ ...consultationData, phone: e.target.value })}
-                              className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-lg text-white focus:border-emerald-500 focus:outline-none transition-all"
-                              placeholder="+1 (555) 123-4567"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {isGuest && (
-                      <div className="max-w-xl mx-auto">
-                        <div className="text-center p-6 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-xl border border-emerald-500/20">
-                          <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <Sparkles className="w-6 h-6 text-emerald-400" />
-                          </div>
-                          <h3 className="font-bold text-emerald-400 mb-2">Guest Mode Active</h3>
-                          <p className="text-gray-400">
-                            Explore our dashboard and see what we offer. Sign up at the end to save your consultation.
-                          </p>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -766,14 +749,12 @@ export default function ConsultationPage() {
                       <Button
                         onClick={() => {
                           setShowCalendly(false)
-                          if (!isGuest) {
-                            window.location.href = "/dashboard"
-                          }
+                          window.location.href = "/dashboard"
                         }}
                         variant="outline"
                         className="border-gray-600 text-gray-300 hover:bg-gray-800"
                       >
-                        {isGuest ? "Skip to Dashboard" : "Continue to Dashboard"}
+                        Continue to Dashboard
                       </Button>
                     </div>
                   </div>
@@ -806,9 +787,9 @@ export default function ConsultationPage() {
               <Button
                 onClick={handleSubmit}
                 className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white"
-                disabled={!isGuest && (!consultationData.name || !consultationData.email)}
+                disabled={!consultationData.name || !consultationData.email}
               >
-                {isGuest ? "Preview Dashboard" : "Book Consultation"}
+                Book Consultation
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             ) : null}
