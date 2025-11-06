@@ -83,7 +83,14 @@ body {
 }
 
 /* Calendly widget transparent background - target main container divs */
-.calendly-widget-wrapper > div {
+.calendly-widget-wrapper > div,
+.calendly-widget-wrapper > div > div {
+  background: transparent !important;
+}
+
+/* Target all container divs within Calendly wrapper to ensure transparency */
+/* Specific rules below will override for elements that need backgrounds */
+.calendly-widget-wrapper div {
   background: transparent !important;
 }
 
@@ -95,6 +102,8 @@ div[data-id="layout-container"] {
 }
 
 /* Target Calendly's main container classes (dynamic class names from user's HTML) */
+div.lmtWIHO_gkbTeeyuvoJC,
+div.sbRR6Vj9cBntcZ6P4tOo,
 div._cUP1np9gMvFQrcPftuf,
 div.OGcBAyJGBej5Gnyi9hGA,
 div.xahN8AEzyAvQtVj17TPv,
@@ -145,6 +154,8 @@ div.RK3ps09FjZwzHTaYDakl {
 /* Calendly Widget Theme Styling - Match Website Theme */
 .calendly-widget-wrapper {
   /* Main container backgrounds - dark theme */
+  div.lmtWIHO_gkbTeeyuvoJC,
+  div.sbRR6Vj9cBntcZ6P4tOo,
   div[data-id="layout-container"],
   div[data-container="booking-container"],
   div[data-container="layout-container"],
