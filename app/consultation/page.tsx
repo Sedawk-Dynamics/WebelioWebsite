@@ -29,6 +29,7 @@ import {
   Sparkles,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { InlineWidget } from "react-calendly"
 
 type ConsultationData = {
   businessType: string
@@ -47,6 +48,7 @@ type ConsultationData = {
 export default function ConsultationPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isGuest, setIsGuest] = useState(false)
+  const [showCalendly, setShowCalendly] = useState(false)
   const [consultationData, setConsultationData] = useState<ConsultationData>({
     businessType: "",
     companySize: "",
@@ -60,6 +62,10 @@ export default function ConsultationPage() {
     phone: "",
     isGuest: false,
   })
+
+  // Calendly URL - Replace with your actual Calendly URL
+  const CALENDLY_URL = process.env.NEXT_PUBLIC_CALENDLY_URL || "https://calendly.com/your-username/consultation"
+ 
 
   // Update header dropdown when data changes
   useEffect(() => {
@@ -214,9 +220,18 @@ export default function ConsultationPage() {
   }
 
   const handleSubmit = () => {
+    // Validate required fields before showing Calendly
+    if (!isGuest && (!consultationData.name || !consultationData.email)) {
+      alert("Please fill in all required fields (Name and Email)")
+      return
+    }
+    
+    // Save consultation data
     localStorage.setItem("consultationCompleted", "true")
     localStorage.setItem("consultationData", JSON.stringify(consultationData))
-    window.location.href = "/dashboard"
+    
+    // Show Calendly widget
+    setShowCalendly(true)
   }
 
   const toggleProjectType = (typeId: string) => {
@@ -547,7 +562,7 @@ export default function ConsultationPage() {
                   </div>
                 )}
 
-                {currentStep === 6 && (
+                {currentStep === 6 && !showCalendly && (
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
                       <h2 className="text-2xl font-bold flex items-center justify-center">
@@ -646,6 +661,66 @@ export default function ConsultationPage() {
                     )}
                   </div>
                 )}
+
+                {currentStep === 6 && showCalendly && (
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h2 className="text-2xl font-bold flex items-center justify-center">
+                        <Calendar className="w-6 h-6 mr-3 text-emerald-400" />
+                        Book Your Consultation
+                      </h2>
+                      <p className="text-gray-400">Select a time that works best for you</p>
+                    </div>
+
+                    <div className="w-full" style={{ minHeight: "700px" }}>
+                      <InlineWidget
+                        url={CALENDLY_URL}
+                        styles={{
+                          height: "700px",
+                          width: "100%",
+                        }}
+                        pageSettings={{
+                          backgroundColor: "000000",
+                          hideEventTypeDetails: false,
+                          hideLandingPageDetails: false,
+                          primaryColor: "10b981",
+                          textColor: "ffffff",
+                        }}
+                        prefill={{
+                          name: consultationData.name || undefined,
+                          email: consultationData.email || undefined,
+                          firstName: consultationData.name?.split(" ")[0] || undefined,
+                          lastName: consultationData.name?.split(" ").slice(1).join(" ") || undefined,
+                          customAnswers: {
+                            a1: consultationData.company || undefined,
+                            a2: consultationData.phone || undefined,
+                            a3: consultationData.businessType || undefined,
+                            a4: consultationData.companySize || undefined,
+                            a5: consultationData.projectType.join(", ") || undefined,
+                            a6: consultationData.budget || undefined,
+                            a7: consultationData.timeline || undefined,
+                            a8: consultationData.goals.join(", ") || undefined,
+                          },
+                        }}
+                      />
+                    </div>
+
+                    <div className="text-center">
+                      <Button
+                        onClick={() => {
+                          setShowCalendly(false)
+                          if (!isGuest) {
+                            window.location.href = "/dashboard"
+                          }
+                        }}
+                        variant="outline"
+                        className="border-gray-600 text-gray-300 hover:bg-gray-800"
+                      >
+                        {isGuest ? "Skip to Dashboard" : "Continue to Dashboard"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -670,15 +745,16 @@ export default function ConsultationPage() {
                 Next Step
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
-            ) : (
+            ) : !showCalendly ? (
               <Button
                 onClick={handleSubmit}
                 className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white"
+                disabled={!isGuest && (!consultationData.name || !consultationData.email)}
               >
-                {isGuest ? "Preview Dashboard" : "Start Consultation"}
+                {isGuest ? "Preview Dashboard" : "Book Consultation"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
