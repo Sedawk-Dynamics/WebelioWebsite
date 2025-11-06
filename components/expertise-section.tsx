@@ -218,8 +218,13 @@ export function ExpertiseSection(): ReactElement {
                 </div>
 
                 <div className="absolute inset-0">
-                  <div className="w-full h-full bg-gradient-to-br from-webelio-tertiary to-webelio-primary"></div>
-                  <div className="absolute inset-0 bg-black/50"></div>
+                  <img
+                    src="/images/chargepe.png"
+                    alt="ChargePe App"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-webelio-tertiary/80 to-webelio-primary/80"></div>
+                  <div className="absolute inset-0 bg-black/40"></div>
                 </div>
 
                 <div className="relative z-10 p-6 h-full flex flex-col justify-between">
