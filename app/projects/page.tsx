@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
 import {
@@ -20,6 +20,9 @@ import {
   Shield,
   Heart,
   ThumbsDown,
+  CreditCard,
+  FileText,
+  FileImage,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { getProjects, getCategories, type Project, type Category } from "@/lib/api"
@@ -38,6 +41,18 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true)
   const [filtering, setFiltering] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const AttachmentButton = ({ href, label, icon }: { href: string; label: string; icon: ReactNode }) => (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-700 bg-black/40 text-xs text-gray-200 hover:text-[#ffcc66] hover:border-[#ffcc66] transition-colors"
+    >
+      {icon}
+      <span>{label}</span>
+    </a>
+  )
 
   // Fetch projects and categories from API (initial load)
   useEffect(() => {
@@ -150,6 +165,11 @@ export default function ProjectsPage() {
           date: new Date(project.createdAt).toISOString().split('T')[0],
           status: 'completed' as const,
         })) || [],
+      },
+      files: {
+        visitingCard: project.visitingCard ? `${API_BASE_URL}${project.visitingCard}` : null,
+        letterhead: project.letterhead ? `${API_BASE_URL}${project.letterhead}` : null,
+        companyProfile: project.companyProfile ? `${API_BASE_URL}${project.companyProfile}` : null,
       },
     }
   }
@@ -429,6 +449,35 @@ export default function ProjectsPage() {
                         ))}
                       </div>
                     </div>
+
+                      {(project.files.visitingCard || project.files.letterhead || project.files.companyProfile) && (
+                        <div>
+                          <h3 className="text-lg font-semibold text-white mb-2">Brand Assets</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {project.files.visitingCard && (
+                              <AttachmentButton
+                                href={project.files.visitingCard}
+                                label="Visiting Card"
+                                icon={<CreditCard className="w-4 h-4 text-[#ffcc66]" />}
+                              />
+                            )}
+                            {project.files.letterhead && (
+                              <AttachmentButton
+                                href={project.files.letterhead}
+                                label="Letterhead"
+                                icon={<FileImage className="w-4 h-4 text-[#ffcc66]" />}
+                              />
+                            )}
+                            {project.files.companyProfile && (
+                              <AttachmentButton
+                                href={project.files.companyProfile}
+                                label="Company Profile"
+                                icon={<FileText className="w-4 h-4 text-[#ffcc66]" />}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                     {/* Stats */}
                     <div className="grid grid-cols-3 gap-2">
@@ -752,6 +801,37 @@ export default function ProjectsPage() {
                           ))}
                         </div>
                       </div>
+
+                      {(selectedProject.files.visitingCard ||
+                        selectedProject.files.letterhead ||
+                        selectedProject.files.companyProfile) && (
+                        <div>
+                          <h3 className="text-xl font-semibold text-white mb-4">Project Files</h3>
+                          <div className="flex flex-wrap gap-3">
+                            {selectedProject.files.visitingCard && (
+                              <AttachmentButton
+                                href={selectedProject.files.visitingCard}
+                                label="Visiting Card"
+                                icon={<CreditCard className="w-4 h-4 text-[#ffcc66]" />}
+                              />
+                            )}
+                            {selectedProject.files.letterhead && (
+                              <AttachmentButton
+                                href={selectedProject.files.letterhead}
+                                label="Letterhead"
+                                icon={<FileImage className="w-4 h-4 text-[#ffcc66]" />}
+                              />
+                            )}
+                            {selectedProject.files.companyProfile && (
+                              <AttachmentButton
+                                href={selectedProject.files.companyProfile}
+                                label="Company Profile"
+                                icon={<FileText className="w-4 h-4 text-[#ffcc66]" />}
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Metrics */}
                       <div>
