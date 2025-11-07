@@ -2,7 +2,19 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown, ChevronUp, MessageSquare, MapPin, Phone, Mail } from "lucide-react"
+import {
+  ChevronDown,
+  ChevronUp,
+  MessageSquare,
+  MapPin,
+  Phone,
+  Mail,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+} from "lucide-react"
 import { NewsletterForm } from "./newsletter-form"
 import { FooterPopup } from "./footer-popup"
 import { Button } from "@/components/ui/button"
@@ -34,6 +46,14 @@ export function Footer() {
       title: "Company",
       items: ["About", "Portfolio", "Projects", "Process", "Careers", "Blog"],
     },
+  ]
+
+  const socialLinks = [
+    { name: "Facebook", href: "https://www.facebook.com/webeliodigital", icon: Facebook },
+    { name: "X (Twitter)", href: "https://x.com/webelio_", icon: Twitter },
+    { name: "Instagram", href: "https://www.instagram.com/webelio_/", icon: Instagram },
+    { name: "LinkedIn", href: "https://www.linkedin.com/company/webelio-digital/", icon: Linkedin },
+    { name: "YouTube", href: "https://www.youtube.com/@WebelioDigital", icon: Youtube },
   ]
 
   return (
@@ -125,6 +145,21 @@ export function Footer() {
               </div>
 
               <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  {socialLinks.map(({ name, href, icon: Icon }) => (
+                    <a
+                      key={name}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Follow Webelio on ${name}`}
+                      className="text-muted-foreground hover:text-webelio-tertiary transition-colors"
+                    >
+                      <Icon className="w-5 h-5" />
+                    </a>
+                  ))}
+                </div>
+
                 <Button
                   onClick={() => (window.location.href = "/support")}
                   className="bg-gradient-to-r from-webelio-tertiary to-webelio-secondary hover:from-webelio-tertiary/80 hover:to-webelio-secondary/80 text-webelio-primary font-medium px-4 py-2 text-sm"
@@ -164,6 +199,22 @@ export function Footer() {
               <Mail className="w-4 h-4" />
               <span>info@sedawk.in</span>
             </div>
+          </div>
+
+          {/* Social Links */}
+          <div className="flex justify-center gap-4 pt-2">
+            {socialLinks.map(({ name, href, icon: Icon }) => (
+              <a
+                key={name}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Follow Webelio on ${name}`}
+                className="text-muted-foreground hover:text-webelio-tertiary transition-colors"
+              >
+                <Icon className="w-5 h-5" />
+              </a>
+            ))}
           </div>
 
           {/* Collapsible sections */}

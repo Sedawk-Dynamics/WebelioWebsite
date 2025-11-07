@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useRef, type ReactNode } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
 import {
@@ -20,7 +20,6 @@ import {
   Shield,
   Heart,
   ThumbsDown,
-  CreditCard,
   FileText,
   FileImage,
 } from "lucide-react"
@@ -42,17 +41,89 @@ export default function ProjectsPage() {
   const [filtering, setFiltering] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const AttachmentButton = ({ href, label, icon }: { href: string; label: string; icon: ReactNode }) => (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-gray-700 bg-black/40 text-xs text-gray-200 hover:text-[#ffcc66] hover:border-[#ffcc66] transition-colors"
-    >
-      {icon}
-      <span>{label}</span>
-    </a>
-  )
+  const AssetPreview = ({ url, label }: { url: string; label: string }) => {
+    const extension = url.split('.').pop()?.toLowerCase() || ''
+    const isImage = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'bmp', 'heic'].includes(extension)
+    const isPdf = extension === 'pdf'
+
+    if (isImage) {
+      return (
+        <div className="w-full overflow-hidden rounded-xl border border-gray-800 bg-black/60 shadow-lg shadow-black/20">
+          <div className="relative h-36 bg-gray-900">
+            <img
+              src={url}
+              alt={label}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute bottom-2 right-2 rounded-md bg-black/60 px-2 py-0.5 text-[10px] uppercase tracking-wide text-gray-300">
+              Preview
+            </div>
+          </div>
+          <div className="flex items-center justify-between px-3 py-2">
+            <div>
+              <p className="text-xs font-medium text-white">{label}</p>
+              <p className="text-[11px] text-gray-400">Image file</p>
+            </div>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-[#ffcc66] hover:underline"
+            >
+              View
+            </a>
+          </div>
+        </div>
+      )
+    }
+
+    if (isPdf) {
+      return (
+        <div className="w-full overflow-hidden rounded-xl border border-gray-800 bg-black/60 shadow-lg shadow-black/20">
+          <div className="relative h-40 bg-gray-950">
+            <iframe
+              src={`${url}#view=FitH`}
+              title={`${label} Preview`}
+              className="h-full w-full"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
+            <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-lg bg-black/70 px-2 py-1 text-xs text-gray-200">
+              <FileText className="h-3.5 w-3.5 text-[#ffcc66]" />
+              <span>PDF Preview</span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between px-3 py-2">
+            <div>
+              <p className="text-xs font-medium text-white">{label}</p>
+              <p className="text-[11px] text-gray-400">PDF document</p>
+            </div>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-[#ffcc66] hover:underline"
+            >
+              Open
+            </a>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex w-full items-center gap-2 rounded-lg border border-gray-700 bg-black/40 px-3 py-2 text-xs text-gray-200 hover:border-[#ffcc66] hover:text-[#ffcc66] transition-colors"
+      >
+        <FileImage className="h-4 w-4 text-[#ffcc66]" />
+        <span>{label}</span>
+      </a>
+    )
+  }
 
   // Fetch projects and categories from API (initial load)
   useEffect(() => {
@@ -157,14 +228,15 @@ export default function ProjectsPage() {
       hasLivePreview: !!project.companyWebsite,
       details: {
         overview: project.projectOverview,
-        features: project.keyFeatures,
-        technologies: project.technologiesUsed,
-        team: project.teamMembers || [],
-        milestones: project.projectMilestones?.map((m, i) => ({
-          name: m,
-          date: new Date(project.createdAt).toISOString().split('T')[0],
-          status: 'completed' as const,
-        })) || [],
+        features: Array.isArray(project.keyFeatures) ? project.keyFeatures : [],
+        technologies: Array.isArray(project.technologiesUsed) ? project.technologiesUsed : [],
+        team: Array.isArray(project.teamMembers) ? project.teamMembers : [],
+        milestones: Array.isArray(project.projectMilestones)
+          ? project.projectMilestones.map((m) => ({
+              name: m,
+              status: 'completed' as const,
+            }))
+          : [],
       },
       files: {
         visitingCard: project.visitingCard ? `${API_BASE_URL}${project.visitingCard}` : null,
@@ -424,17 +496,19 @@ export default function ProjectsPage() {
 
                   {/* Project Details */}
                   <div className="p-4 space-y-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white mb-2">Key Features</h3>
-                      <div className="space-y-2">
-                        {project.details.features.slice(0, 3).map((feature: string, featureIndex: number) => (
-                          <div key={featureIndex} className="flex items-center text-gray-300 text-sm">
-                            <CheckCircle className="w-3 h-3 text-green-400 mr-2 flex-shrink-0" />
-                            {feature}
-                          </div>
-                        ))}
+                    {project.details.features.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold text-white mb-2">Key Features</h3>
+                        <div className="space-y-2">
+                          {project.details.features.slice(0, 3).map((feature: string, featureIndex: number) => (
+                            <div key={featureIndex} className="flex items-center text-gray-300 text-sm">
+                              <CheckCircle className="w-3 h-3 text-green-400 mr-2 flex-shrink-0" />
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div>
                       <h3 className="text-lg font-semibold text-white mb-2">Technologies</h3>
@@ -453,26 +527,23 @@ export default function ProjectsPage() {
                       {(project.files.visitingCard || project.files.letterhead || project.files.companyProfile) && (
                         <div>
                           <h3 className="text-lg font-semibold text-white mb-2">Brand Assets</h3>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="space-y-3">
                             {project.files.visitingCard && (
-                              <AttachmentButton
-                                href={project.files.visitingCard}
+                              <AssetPreview
+                                url={project.files.visitingCard}
                                 label="Visiting Card"
-                                icon={<CreditCard className="w-4 h-4 text-[#ffcc66]" />}
                               />
                             )}
                             {project.files.letterhead && (
-                              <AttachmentButton
-                                href={project.files.letterhead}
+                              <AssetPreview
+                                url={project.files.letterhead}
                                 label="Letterhead"
-                                icon={<FileImage className="w-4 h-4 text-[#ffcc66]" />}
                               />
                             )}
                             {project.files.companyProfile && (
-                              <AttachmentButton
-                                href={project.files.companyProfile}
+                              <AssetPreview
+                                url={project.files.companyProfile}
                                 label="Company Profile"
-                                icon={<FileText className="w-4 h-4 text-[#ffcc66]" />}
                               />
                             )}
                           </div>
@@ -742,17 +813,19 @@ export default function ProjectsPage() {
                       </div>
 
                       {/* Key Features */}
-                      <div>
-                        <h3 className="text-xl font-semibold text-white mb-4">Key Features</h3>
-                        <div className="space-y-3">
-                          {selectedProject.details.features.map((feature: string, index: number) => (
-                            <div key={index} className="flex items-center text-gray-300">
-                              <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
-                              {feature}
-                            </div>
-                          ))}
+                      {selectedProject.details.features.length > 0 && (
+                        <div>
+                          <h3 className="text-xl font-semibold text-white mb-4">Key Features</h3>
+                          <div className="space-y-3">
+                            {selectedProject.details.features.map((feature: string, index: number) => (
+                              <div key={index} className="flex items-center text-gray-300">
+                                <CheckCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
+                                {feature}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Technologies */}
                       <div>
@@ -770,63 +843,63 @@ export default function ProjectsPage() {
                       </div>
 
                       {/* Team */}
-                      <div>
-                        <h3 className="text-xl font-semibold text-white mb-4">Team</h3>
-                        <div className="space-y-2">
-                          {selectedProject.details.team.map((member: string, index: number) => (
-                            <div key={index} className="flex items-center text-gray-300">
-                              <User className="w-4 h-4 text-gray-400 mr-3" />
-                              {member}
-                            </div>
-                          ))}
+                      {selectedProject.details.team.length > 0 && (
+                        <div>
+                          <h3 className="text-xl font-semibold text-white mb-4">Team</h3>
+                          <div className="space-y-2">
+                            {selectedProject.details.team.map((member: string, index: number) => (
+                              <div key={index} className="flex items-center text-gray-300">
+                                <User className="w-4 h-4 text-gray-400 mr-3" />
+                                {member}
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Milestones */}
-                      <div>
-                        <h3 className="text-xl font-semibold text-white mb-4">Project Milestones</h3>
-                        <div className="space-y-3">
-                          {selectedProject.details.milestones.map((milestone: any, index: number) => (
-                            <div key={index} className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <div
-                                  className={`w-3 h-3 rounded-full mr-3 ${
-                                    milestone.status === "completed" ? "bg-green-400" : "bg-gray-600"
-                                  }`}
-                                />
-                                <span className="text-gray-300">{milestone.name}</span>
+                      {selectedProject.details.milestones.length > 0 && (
+                        <div>
+                          <h3 className="text-xl font-semibold text-white mb-4">Project Milestones</h3>
+                          <div className="space-y-3">
+                            {selectedProject.details.milestones.map((milestone: any, index: number) => (
+                              <div key={index} className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                  <div
+                                    className={`w-3 h-3 rounded-full mr-3 ${
+                                      milestone.status === "completed" ? "bg-green-400" : "bg-gray-600"
+                                    }`}
+                                  />
+                                  <span className="text-gray-300">{milestone.name}</span>
+                                </div>
                               </div>
-                              <span className="text-sm text-gray-500">{milestone.date}</span>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {(selectedProject.files.visitingCard ||
                         selectedProject.files.letterhead ||
                         selectedProject.files.companyProfile) && (
                         <div>
                           <h3 className="text-xl font-semibold text-white mb-4">Project Files</h3>
-                          <div className="flex flex-wrap gap-3">
+                          <div className="space-y-4">
                             {selectedProject.files.visitingCard && (
-                              <AttachmentButton
-                                href={selectedProject.files.visitingCard}
+                              <AssetPreview
+                                url={selectedProject.files.visitingCard}
                                 label="Visiting Card"
-                                icon={<CreditCard className="w-4 h-4 text-[#ffcc66]" />}
                               />
                             )}
                             {selectedProject.files.letterhead && (
-                              <AttachmentButton
-                                href={selectedProject.files.letterhead}
+                              <AssetPreview
+                                url={selectedProject.files.letterhead}
                                 label="Letterhead"
-                                icon={<FileImage className="w-4 h-4 text-[#ffcc66]" />}
                               />
                             )}
                             {selectedProject.files.companyProfile && (
-                              <AttachmentButton
-                                href={selectedProject.files.companyProfile}
+                              <AssetPreview
+                                url={selectedProject.files.companyProfile}
                                 label="Company Profile"
-                                icon={<FileText className="w-4 h-4 text-[#ffcc66]" />}
                               />
                             )}
                           </div>
