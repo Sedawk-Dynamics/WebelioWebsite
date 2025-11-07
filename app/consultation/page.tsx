@@ -32,6 +32,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { InlineWidget } from "react-calendly"
+import { submitEnquiry } from "@/lib/api"
 
 type ConsultationData = {
   businessType: string
@@ -51,6 +52,8 @@ export default function ConsultationPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isGuest, setIsGuest] = useState(false)
   const [showCalendly, setShowCalendly] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [consultationData, setConsultationData] = useState<ConsultationData>({
     businessType: "",
     companySize: "",
@@ -295,19 +298,56 @@ export default function ConsultationPage() {
     }
   }
 
-  const handleSubmit = () => {
-    // Validate required fields before showing Calendly
+  const handleSubmit = async () => {
+    // Validate required fields
     if (!consultationData.name || !consultationData.email) {
-      alert("Please fill in all required fields (Name and Email)")
+      setSubmitError("Please fill in all required fields (Name and Email)")
       return
     }
-    
-    // Save consultation data
-    localStorage.setItem("consultationCompleted", "true")
-    localStorage.setItem("consultationData", JSON.stringify(consultationData))
-    
-    // Show Calendly widget
-    setShowCalendly(true)
+
+    if (!consultationData.company) {
+      setSubmitError("Please provide your business/company name")
+      return
+    }
+
+    if (consultationData.projectType.length === 0) {
+      setSubmitError("Please select at least one project type")
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      // Map consultation data to API format
+      const enquiryPayload = {
+        service: consultationData.projectType.join(", "),
+        businessName: consultationData.company,
+        businessType: consultationData.businessType || "",
+        companySize: consultationData.companySize || "",
+        primaryGoal: consultationData.goals.join(", ") || "",
+        budget: consultationData.budget || "",
+        timeline: consultationData.timeline || "",
+        location: "", // Not collected in consultation form
+        contactName: consultationData.name,
+        email: consultationData.email,
+      }
+
+      // Submit to API
+      await submitEnquiry(enquiryPayload)
+
+      // Save consultation data to localStorage
+      localStorage.setItem("consultationCompleted", "true")
+      localStorage.setItem("consultationData", JSON.stringify(consultationData))
+
+      // Show Calendly widget
+      setShowCalendly(true)
+    } catch (error) {
+      console.error("Error submitting consultation:", error)
+      setSubmitError(error instanceof Error ? error.message : "Failed to submit consultation. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const toggleProjectType = (typeId: string) => {
@@ -750,11 +790,17 @@ export default function ConsultationPage() {
             </AnimatePresence>
           </div>
 
+          {submitError && (
+            <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <p className="text-red-400 text-sm">{submitError}</p>
+            </div>
+          )}
+
           {/* Navigation */}
           <div className="flex justify-between items-center">
             <Button
               onClick={prevStep}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || isSubmitting}
               variant="outline"
               className="border-gray-600 text-gray-300 hover:bg-gray-800 disabled:opacity-50"
             >
@@ -773,11 +819,11 @@ export default function ConsultationPage() {
             ) : !showCalendly ? (
               <Button
                 onClick={handleSubmit}
-                className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white"
-                disabled={!consultationData.name || !consultationData.email}
+                className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!consultationData.name || !consultationData.email || isSubmitting}
               >
-                Book Consultation
-                <ArrowRight className="w-4 h-4 ml-2" />
+                {isSubmitting ? "Submitting..." : "Book Consultation"}
+                {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
               </Button>
             ) : null}
           </div>

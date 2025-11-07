@@ -26,6 +26,7 @@ import {
   Brain,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { submitEnquiry } from "@/lib/api"
 
 export function ExpertiseSection(): ReactElement {
   const ref = useRef(null)
@@ -583,6 +584,8 @@ function ServiceSelectionCard(): ReactElement {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [isCompleted, setIsCompleted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const services = [
     {
@@ -724,31 +727,42 @@ function ServiceSelectionCard(): ReactElement {
   }
 
   const sendInquiryEmail = async (inquiryData: Record<string, string>, serviceType: string | null) => {
+    setIsSubmitting(true)
+    setSubmitError(null)
+    
     try {
       const selectedServiceData = services.find((s) => s.id === serviceType)
-      const emailBody = `
-New Consultation Inquiry
+      
+      // Map the enquiry data to the API format
+      const enquiryPayload = {
+        service: selectedServiceData?.name || "Unknown",
+        businessName: inquiryData.businessName || "",
+        businessType: inquiryData.businessType || "",
+        companySize: inquiryData.companySize || "",
+        primaryGoal: inquiryData.goal || "",
+        budget: inquiryData.budget || "",
+        timeline: inquiryData.timeline || "",
+        location: inquiryData.location || "",
+        contactName: inquiryData.contactName || "",
+        email: inquiryData.email || "",
+      }
 
-Service: ${selectedServiceData?.name || "Unknown"}
-Business Name: ${inquiryData.businessName || "Not provided"}
-Business Type: ${inquiryData.businessType || "Not provided"}
-Company Size: ${inquiryData.companySize || "Not provided"}
-Primary Goal: ${inquiryData.goal || "Not provided"}
-Budget: ${inquiryData.budget || "Not provided"}
-Timeline: ${inquiryData.timeline || "Not provided"}
-Location: ${inquiryData.location || "Not provided"}
-Contact Name: ${inquiryData.contactName || "Not provided"}
-Email: ${inquiryData.email || "Not provided"}
+      // Validate required fields
+      if (!enquiryPayload.service || !enquiryPayload.businessName || !enquiryPayload.contactName || !enquiryPayload.email) {
+        throw new Error("Please fill in all required fields")
+      }
 
-Submitted at: ${new Date().toLocaleString()}
-    `
-
-      // This would typically be handled by a server endpoint
-      // For now, we'll use mailto as a fallback
-      const mailtoLink = `mailto:info@sedawk.in?subject=New Consultation Inquiry - ${selectedServiceData?.name}&body=${encodeURIComponent(emailBody)}`
-      window.open(mailtoLink)
+      // Submit to API
+      await submitEnquiry(enquiryPayload)
+      
+      // Success - mark as completed
+      setIsCompleted(true)
     } catch (error) {
       console.error("Error sending inquiry:", error)
+      setSubmitError(error instanceof Error ? error.message : "Failed to submit enquiry. Please try again.")
+      // Don't mark as completed on error - let user try again
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -803,12 +817,14 @@ Submitted at: ${new Date().toLocaleString()}
                 className="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-webelio-tertiary focus:ring-1 focus:ring-webelio-tertiary outline-none"
                 placeholder={currentQuestionData.placeholder}
                 required
+                disabled={isSubmitting}
               />
               <button
                 type="submit"
-                className="w-full p-3 bg-webelio-tertiary text-webelio-primary font-medium rounded-lg hover:bg-webelio-tertiary/80 transition-colors"
+                disabled={isSubmitting}
+                className="w-full p-3 bg-webelio-tertiary text-webelio-primary font-medium rounded-lg hover:bg-webelio-tertiary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Continue
+                {isSubmitting ? "Submitting..." : "Continue"}
               </button>
             </form>
           ) : (
@@ -817,7 +833,8 @@ Submitted at: ${new Date().toLocaleString()}
                 <button
                   key={option}
                   onClick={() => handleAnswerSelect(option)}
-                  className="p-3 border border-gray-700 rounded-lg hover:border-webelio-tertiary hover:bg-webelio-tertiary/10 transition-all duration-200 text-left"
+                  disabled={isSubmitting}
+                  className="p-3 border border-gray-700 rounded-lg hover:border-webelio-tertiary hover:bg-webelio-tertiary/10 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="text-webelio-tertiary font-medium text-sm">{option}</span>
                 </button>
@@ -825,8 +842,18 @@ Submitted at: ${new Date().toLocaleString()}
             </div>
           )}
 
+          {submitError && (
+            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <p className="text-red-400 text-sm">{submitError}</p>
+            </div>
+          )}
+
           <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">{questions.length - currentQuestion - 1} questions remaining</p>
+            {isSubmitting ? (
+              <p className="text-webelio-tertiary text-sm">Submitting your enquiry...</p>
+            ) : (
+              <p className="text-gray-400 text-sm">{questions.length - currentQuestion - 1} questions remaining</p>
+            )}
           </div>
         </div>
       </div>
@@ -859,6 +886,7 @@ Submitted at: ${new Date().toLocaleString()}
               setCurrentQuestion(0)
               setAnswers({})
               setIsCompleted(false)
+              setSubmitError(null)
             }}
             className="mt-4 text-sm text-gray-400 hover:text-white"
           >

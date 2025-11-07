@@ -543,7 +543,7 @@ export default function ProjectsPage() {
                         {project.details.technologies.slice(0, 4).map((tech: string, techIndex: number) => (
                           <span
                             key={techIndex}
-                            className="px-2 py-1 bg-primary/20 text-primary rounded text-xs border border-primary/30"
+                            className="px-2 py-1 bg-[#ffcc66]/20 text-[#ffcc66] rounded text-xs border border-[#ffcc66]/30"
                           >
                             {tech}
                           </span>
@@ -573,7 +573,7 @@ export default function ProjectsPage() {
                         <Button
                           onClick={() => window.open(project.previewUrl, "_blank")}
                           size="sm"
-                          className="flex-1 bg-primary/20 text-primary hover:bg-primary/30"
+                          className="flex-1 bg-[#ffcc66]/20 text-[#ffcc66] hover:bg-[#ffcc66]/30 border border-[#ffcc66]/30"
                         >
                           <ExternalLink className="w-4 h-4 mr-2" />
                           Visit Site
@@ -766,7 +766,7 @@ export default function ProjectsPage() {
                         <Button
                           onClick={() => window.open(selectedProject.previewUrl, "_blank")}
                           size="sm"
-                          className="bg-primary/20 text-primary hover:bg-primary/30"
+                          className="bg-[#ffcc66]/20 text-[#ffcc66] hover:bg-[#ffcc66]/30 border border-[#ffcc66]/30"
                         >
                           <ExternalLink className="w-4 h-4 mr-2" />
                           Visit Site
@@ -817,7 +817,7 @@ export default function ProjectsPage() {
                           {selectedProject.details.technologies.map((tech: string, index: number) => (
                             <span
                               key={index}
-                              className="px-3 py-1 bg-primary/20 text-primary rounded-full text-sm border border-primary/30"
+                              className="px-3 py-1 bg-[#ffcc66]/20 text-[#ffcc66] rounded-full text-sm border border-[#ffcc66]/30"
                             >
                               {tech}
                             </span>
