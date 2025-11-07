@@ -90,6 +90,11 @@ export interface Project {
   id: string;
   projectName: string;
   companyName: string;
+  categoryId?: string;
+  category?: {
+    id: string;
+    name: string;
+  } | null;
   projectStatus: string;
   isFeatured: boolean;
   projectCompletionTime: string;
@@ -128,11 +133,13 @@ export interface ProjectsResponse {
 export async function getProjects(params?: {
   status?: string;
   featured?: boolean;
+  category?: string;
   limit?: number;
 }): Promise<ProjectsResponse> {
   const queryParams = new URLSearchParams();
   if (params?.status) queryParams.append('status', params.status);
   if (params?.featured !== undefined) queryParams.append('featured', params.featured.toString());
+  if (params?.category) queryParams.append('category', params.category);
   if (params?.limit) queryParams.append('limit', params.limit.toString());
 
   const url = `${API_BASE_URL}/api/projects${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
@@ -160,6 +167,35 @@ export async function getProject(id: string): Promise<Project> {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Failed to fetch project');
+  }
+
+  return response.json();
+}
+
+// ==================== CATEGORIES API ====================
+
+export interface Category {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CategoriesResponse {
+  categories: Category[];
+}
+
+/**
+ * Get all categories
+ */
+export async function getCategories(): Promise<CategoriesResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/categories`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch categories');
   }
 
   return response.json();

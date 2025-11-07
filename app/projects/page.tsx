@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
 import {
@@ -22,58 +22,107 @@ import {
   ThumbsDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getProjects, type Project } from "@/lib/api"
+import { getProjects, getCategories, type Project, type Category } from "@/lib/api"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedFilter, setSelectedFilter] = useState("all")
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedProject, setSelectedProject] = useState<any>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [projectLikes, setProjectLikes] = useState<{ [key: string]: { liked: boolean; disliked: boolean } }>({})
   const [apiProjects, setApiProjects] = useState<Project[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [allProjectsForCounts, setAllProjectsForCounts] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [filtering, setFiltering] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Fetch projects from API
+  // Fetch projects and categories from API (initial load)
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchData = async () => {
       setLoading(true)
       setError(null)
       try {
-        const response = await getProjects()
-        setApiProjects(response.projects)
+        const [projectsResponse, categoriesResponse] = await Promise.all([
+          getProjects(selectedCategory ? { category: selectedCategory } : {}),
+          getCategories()
+        ])
+        setApiProjects(projectsResponse.projects)
+        setCategories(categoriesResponse.categories)
       } catch (err) {
-        console.error('Error fetching projects:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load projects')
-        // Fallback to empty array - projects will be empty
+        console.error('Error fetching data:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load data')
         setApiProjects([])
+        setCategories([])
       } finally {
         setLoading(false)
       }
     }
-    fetchProjects()
-  }, [])
+    fetchData()
+  }, []) // Only run on initial mount
+
+  // Fetch projects when category changes (without full page reload)
+  useEffect(() => {
+    if (categories.length === 0) return // Don't filter until categories are loaded
+    
+    const fetchFilteredProjects = async () => {
+      setFiltering(true)
+      try {
+        const projectsResponse = await getProjects(selectedCategory ? { category: selectedCategory } : {})
+        setApiProjects(projectsResponse.projects)
+      } catch (err) {
+        console.error('Error filtering projects:', err)
+        setError(err instanceof Error ? err.message : 'Failed to filter projects')
+      } finally {
+        setFiltering(false)
+      }
+    }
+    fetchFilteredProjects()
+  }, [selectedCategory, categories.length])
+
+  // Fetch all projects for filter counts (always keep this updated to show accurate "All Projects" count)
+  useEffect(() => {
+    if (categories.length > 0) {
+      // Always fetch all projects to get accurate counts for "All Projects" and category filters
+      getProjects().then(response => setAllProjectsForCounts(response.projects)).catch(() => setAllProjectsForCounts([]))
+    }
+  }, [categories.length])
 
   // Map API projects to UI format
   const mapApiProjectToUI = (project: Project) => {
-    // Determine category from technologies or default to 'web'
-    const category = project.technologiesUsed.some(t => 
-      t.toLowerCase().includes('react native') || 
-      t.toLowerCase().includes('flutter') ||
-      t.toLowerCase().includes('mobile')
-    ) ? 'mobile' : 
-    project.technologiesUsed.some(t => 
-      t.toLowerCase().includes('iot') || 
-      t.toLowerCase().includes('hardware')
-    ) ? 'product' : 'web'
+    // Use actual category from API, fallback to inferring from technologies if not available
+    let category = 'web' // Default
+    if (project.category?.name) {
+      // Map category name to a simple category identifier for UI compatibility
+      const catName = project.category.name.toLowerCase()
+      if (catName.includes('mobile') || catName.includes('app')) {
+        category = 'mobile'
+      } else if (catName.includes('product') || catName.includes('iot') || catName.includes('hardware')) {
+        category = 'product'
+      } else {
+        category = 'web'
+      }
+    } else {
+      // Fallback: Determine category from technologies
+      category = project.technologiesUsed.some(t => 
+        t.toLowerCase().includes('react native') || 
+        t.toLowerCase().includes('flutter') ||
+        t.toLowerCase().includes('mobile')
+      ) ? 'mobile' : 
+      project.technologiesUsed.some(t => 
+        t.toLowerCase().includes('iot') || 
+        t.toLowerCase().includes('hardware')
+      ) ? 'product' : 'web'
+    }
 
     return {
       id: project.id,
       name: project.projectName,
       client: project.companyName,
       category,
+      categoryName: project.category?.name || null, // Store actual category name
       status: project.projectStatus,
       budget: '', // Not in API
       timeline: project.projectCompletionTime,
@@ -105,21 +154,24 @@ export default function ProjectsPage() {
     }
   }
 
-  const filters = [
-    { id: "all", label: "All Projects", count: apiProjects.length },
-    { id: "web", label: "Web Development", count: apiProjects.filter(p => {
-      const cat = mapApiProjectToUI(p).category
-      return cat === 'web'
-    }).length },
-    { id: "mobile", label: "Mobile Apps", count: apiProjects.filter(p => {
-      const cat = mapApiProjectToUI(p).category
-      return cat === 'mobile'
-    }).length },
-    { id: "product", label: "Physical Products", count: apiProjects.filter(p => {
-      const cat = mapApiProjectToUI(p).category
-      return cat === 'product'
-    }).length },
+  // Create category-based filters
+  const categoryFilters = [
+    { 
+      id: null, 
+      label: "All Projects", 
+      // Always show total count of all projects, regardless of selected category
+      count: allProjectsForCounts.length || apiProjects.length
+    },
+    ...categories.map(cat => ({
+      id: cat.id,
+      label: cat.name,
+      // Always use allProjectsForCounts for accurate category counts
+      count: allProjectsForCounts.filter(p => p.categoryId === cat.id || p.category?.id === cat.id).length
+    }))
   ]
+
+  // Use categoryFilters instead of old filters
+  const filters = categoryFilters
 
   // Use API projects, mapped to UI format
   const projects = apiProjects.map(mapApiProjectToUI)
@@ -130,10 +182,39 @@ export default function ProjectsPage() {
       project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
       project.description.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesFilter = selectedFilter === "all" || project.category === selectedFilter
-
-    return matchesSearch && matchesFilter
+    // Category filtering is handled by API, so we just filter by search
+    return matchesSearch
   })
+
+  // Track previous category to detect category changes
+  const prevCategoryRef = useRef<string | null>(null)
+  const prevFilteredProjectIdsRef = useRef<string[]>([])
+
+  // Set first project as default selected (only if no project is selected or selected project is not in filtered list)
+  useEffect(() => {
+    if (filteredProjects.length > 0 && !filtering) {
+      const currentProjectIds = filteredProjects.map(p => p.id)
+      const categoryChanged = prevCategoryRef.current !== selectedCategory
+      const projectListChanged = JSON.stringify(prevFilteredProjectIdsRef.current) !== JSON.stringify(currentProjectIds)
+      
+      // Check if currently selected project is still in the filtered list
+      const currentProjectInList = selectedProject && filteredProjects.find(p => p.id === selectedProject.id)
+      
+      if (!selectedProject) {
+        // No project selected, select the first one
+        setSelectedProject(filteredProjects[0])
+      } else if (!currentProjectInList && (categoryChanged || projectListChanged)) {
+        // Selected project is no longer in the filtered list, select the first available
+        // Only update if category changed or project list actually changed
+        setSelectedProject(filteredProjects[0])
+      }
+      // If current project is still in list, keep it - don't update to prevent iframe reload
+      
+      // Update refs
+      prevCategoryRef.current = selectedCategory
+      prevFilteredProjectIdsRef.current = currentProjectIds
+    }
+  }, [filteredProjects, filtering, selectedCategory, selectedProject])
 
   // Show loading state
   if (loading) {
@@ -209,11 +290,6 @@ export default function ProjectsPage() {
     console.log(`Disliked project: ${projectId}`)
   }
 
-  // Set first project as default selected
-  if (!selectedProject && filteredProjects.length > 0) {
-    setSelectedProject(filteredProjects[0])
-  }
-
   // Mobile view detection
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768
 
@@ -245,14 +321,19 @@ export default function ProjectsPage() {
               />
             </div>
 
-            {/* Filters */}
+            {/* Category Filters */}
             <div className="flex flex-wrap gap-2 mb-6">
               {filters.map((filter) => (
                 <button
-                  key={filter.id}
-                  onClick={() => setSelectedFilter(filter.id)}
+                  key={filter.id || 'all'}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedCategory(filter.id);
+                  }}
                   className={`px-3 py-1 text-xs rounded transition-all ${
-                    selectedFilter === filter.id
+                    selectedCategory === filter.id
                       ? "bg-secondary/20 text-secondary border border-primary/50"
                       : "bg-gray-950 text-gray-400 border border-gray-800 hover:text-white hover:border-primary/30"
                   }`}
@@ -263,7 +344,12 @@ export default function ProjectsPage() {
             </div>
 
             {/* Mobile Project List - Scrollable */}
-            <div className="space-y-6">
+            <div className="space-y-6 relative">
+              {filtering && (
+                <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center rounded-lg">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffcc66]"></div>
+                </div>
+              )}
               {filteredProjects.map((project, index) => (
                 <div key={project.id} className="bg-black border border-white/20 rounded-lg overflow-hidden">
                   {/* Project Header */}
@@ -277,6 +363,9 @@ export default function ProjectsPage() {
                       <div className="flex-1">
                         <h2 className="text-xl font-bold text-white">{project.name}</h2>
                         <p className="text-sm text-gray-400">{project.client}</p>
+                        {project.categoryName && (
+                          <p className="text-xs text-[#ffcc66] mt-1">{project.categoryName}</p>
+                        )}
                         <div className="flex items-center space-x-2 mt-2">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(
@@ -297,6 +386,7 @@ export default function ProjectsPage() {
                   <div className="bg-white">
                     {project.hasLivePreview ? (
                       <iframe
+                        key={project.id}
                         src={project.previewUrl}
                         className="w-full h-64 border-0"
                         title={`${project.name} Preview`}
@@ -441,14 +531,19 @@ export default function ProjectsPage() {
                 />
               </div>
 
-              {/* Filters */}
+              {/* Category Filters */}
               <div className="flex flex-wrap gap-1 mb-4">
                 {filters.map((filter) => (
                   <button
-                    key={filter.id}
-                    onClick={() => setSelectedFilter(filter.id)}
+                    key={filter.id || 'all'}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setSelectedCategory(filter.id);
+                    }}
                     className={`px-2 py-1 text-xs rounded transition-all ${
-                      selectedFilter === filter.id
+                      selectedCategory === filter.id
                         ? "bg-secondary/20 text-secondary border border-primary/50"
                         : "bg-gray-950 text-gray-400 border border-gray-800 hover:text-white hover:border-primary/30"
                     }`}
@@ -459,7 +554,12 @@ export default function ProjectsPage() {
               </div>
 
               {/* Projects List */}
-              <div className="space-y-3">
+              <div className="space-y-3 relative">
+                {filtering && (
+                  <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ffcc66]"></div>
+                  </div>
+                )}
                 {filteredProjects.map((project) => (
                   <div
                     key={project.id}
@@ -487,6 +587,9 @@ export default function ProjectsPage() {
                             )}
                           </div>
                           <p className="text-xs text-gray-400 mb-1">{project.client}</p>
+                          {project.categoryName && (
+                            <p className="text-xs text-[#ffcc66] mb-1">{project.categoryName}</p>
+                          )}
                           <p className="text-xs text-gray-500 line-clamp-2 mb-2">{project.description}</p>
 
                           <div className="flex items-center justify-between">
@@ -524,7 +627,10 @@ export default function ProjectsPage() {
                       />
                       <div>
                         <h2 className="text-3xl font-bold text-white mb-2">{selectedProject.name}</h2>
-                        <p className="text-lg text-gray-400 mb-3">{selectedProject.client}</p>
+                        <p className="text-lg text-gray-400 mb-2">{selectedProject.client}</p>
+                        {selectedProject.categoryName && (
+                          <p className="text-sm text-[#ffcc66] mb-3">{selectedProject.categoryName}</p>
+                        )}
                         <div className="flex items-center space-x-4">
                           <span
                             className={`px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(
@@ -705,9 +811,15 @@ export default function ProjectsPage() {
                   </div>
 
                   {/* Project Preview */}
-                  <div className={`${isFullscreen ? "w-full" : "flex-1"} bg-white`}>
+                  <div className={`${isFullscreen ? "w-full" : "flex-1"} bg-white relative`}>
+                    {filtering && selectedProject && (
+                      <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffcc66]"></div>
+                      </div>
+                    )}
                     {selectedProject.hasLivePreview ? (
                       <iframe
+                        key={selectedProject.id}
                         src={selectedProject.previewUrl}
                         className="w-full h-full border-0"
                         title={`${selectedProject.name} Preview`}
