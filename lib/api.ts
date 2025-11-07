@@ -84,3 +84,84 @@ export async function checkApiHealth(): Promise<boolean> {
   }
 }
 
+// ==================== PROJECTS API ====================
+
+export interface Project {
+  id: string;
+  projectName: string;
+  companyName: string;
+  projectStatus: string;
+  isFeatured: boolean;
+  projectCompletionTime: string;
+  projectOverview: string;
+  companyWebsite?: string;
+  keyFeatures: string[];
+  technologiesUsed: string[];
+  teamMembers?: string[];
+  projectMilestones?: string[];
+  socialMediaAccounts?: {
+    facebook?: string;
+    instagram?: string;
+    twitter?: string;
+    linkedin?: string;
+  };
+  projectMetrics?: {
+    revenue?: string;
+    users?: string;
+    satisfaction?: string;
+  };
+  companyLogo?: string;
+  visitingCard?: string;
+  letterhead?: string;
+  companyProfile?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ProjectsResponse {
+  projects: Project[];
+}
+
+/**
+ * Get all projects
+ */
+export async function getProjects(params?: {
+  status?: string;
+  featured?: boolean;
+  limit?: number;
+}): Promise<ProjectsResponse> {
+  const queryParams = new URLSearchParams();
+  if (params?.status) queryParams.append('status', params.status);
+  if (params?.featured !== undefined) queryParams.append('featured', params.featured.toString());
+  if (params?.limit) queryParams.append('limit', params.limit.toString());
+
+  const url = `${API_BASE_URL}/api/projects${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch projects');
+  }
+
+  return response.json();
+}
+
+/**
+ * Get single project by ID
+ */
+export async function getProject(id: string): Promise<Project> {
+  const response = await fetch(`${API_BASE_URL}/api/projects/${id}`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch project');
+  }
+
+  return response.json();
+}
+

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
 import {
@@ -22,6 +22,9 @@ import {
   ThumbsDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { getProjects, type Project } from "@/lib/api"
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -29,335 +32,97 @@ export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState<any>(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [projectLikes, setProjectLikes] = useState<{ [key: string]: { liked: boolean; disliked: boolean } }>({})
+  const [apiProjects, setApiProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // Fetch projects from API
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const response = await getProjects()
+        setApiProjects(response.projects)
+      } catch (err) {
+        console.error('Error fetching projects:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load projects')
+        // Fallback to empty array - projects will be empty
+        setApiProjects([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProjects()
+  }, [])
+
+  // Map API projects to UI format
+  const mapApiProjectToUI = (project: Project) => {
+    // Determine category from technologies or default to 'web'
+    const category = project.technologiesUsed.some(t => 
+      t.toLowerCase().includes('react native') || 
+      t.toLowerCase().includes('flutter') ||
+      t.toLowerCase().includes('mobile')
+    ) ? 'mobile' : 
+    project.technologiesUsed.some(t => 
+      t.toLowerCase().includes('iot') || 
+      t.toLowerCase().includes('hardware')
+    ) ? 'product' : 'web'
+
+    return {
+      id: project.id,
+      name: project.projectName,
+      client: project.companyName,
+      category,
+      status: project.projectStatus,
+      budget: '', // Not in API
+      timeline: project.projectCompletionTime,
+      completion: project.projectStatus === 'completed' ? 100 : project.projectStatus === 'active' ? 50 : 0,
+      rating: 5, // Default
+      description: project.projectOverview,
+      image: project.companyLogo ? `${API_BASE_URL}${project.companyLogo}` : "/placeholder.svg?height=300&width=500",
+      logo: project.companyLogo ? `${API_BASE_URL}${project.companyLogo}` : "/placeholder-logo.svg",
+      tags: project.technologiesUsed.slice(0, 4),
+      metrics: project.projectMetrics || {
+        revenue: 'N/A',
+        users: 'N/A',
+        satisfaction: 'N/A',
+      },
+      featured: project.isFeatured,
+      previewUrl: project.companyWebsite || '#',
+      hasLivePreview: !!project.companyWebsite,
+      details: {
+        overview: project.projectOverview,
+        features: project.keyFeatures,
+        technologies: project.technologiesUsed,
+        team: project.teamMembers || [],
+        milestones: project.projectMilestones?.map((m, i) => ({
+          name: m,
+          date: new Date(project.createdAt).toISOString().split('T')[0],
+          status: 'completed' as const,
+        })) || [],
+      },
+    }
+  }
 
   const filters = [
-    { id: "all", label: "All Projects", count: 9 },
-    { id: "web", label: "Web Development", count: 6 },
-    { id: "mobile", label: "Mobile Apps", count: 1 },
-    { id: "product", label: "Physical Products", count: 2 },
+    { id: "all", label: "All Projects", count: apiProjects.length },
+    { id: "web", label: "Web Development", count: apiProjects.filter(p => {
+      const cat = mapApiProjectToUI(p).category
+      return cat === 'web'
+    }).length },
+    { id: "mobile", label: "Mobile Apps", count: apiProjects.filter(p => {
+      const cat = mapApiProjectToUI(p).category
+      return cat === 'mobile'
+    }).length },
+    { id: "product", label: "Physical Products", count: apiProjects.filter(p => {
+      const cat = mapApiProjectToUI(p).category
+      return cat === 'product'
+    }).length },
   ]
 
-  const projects = [
-    // Top 3 projects as requested
-    {
-      id: "glasspatch",
-      name: "GlassPatch",
-      client: "GlassPatch LLC",
-      category: "web",
-      status: "completed",
-      budget: "$95K",
-      timeline: "6 months",
-      completion: 100,
-      rating: 5,
-      description: "Bay Area glass repair service platform with mobile booking and expert technician network",
-      image: "/images/glasspatch-screenshot.png",
-      logo: "/images/glasspatch-logo-new.png",
-      tags: ["Glass Repair", "Mobile Service", "Bay Area", "Professional"],
-      metrics: {
-        revenue: "$1.1M",
-        users: "12K+",
-        satisfaction: "97%",
-      },
-      featured: true,
-      previewUrl: "https://glasspatch.us",
-      hasLivePreview: true,
-      details: {
-        overview: "Professional glass repair service platform connecting customers with certified technicians.",
-        features: ["Mobile booking", "Real-time tracking", "Expert network", "Insurance claims"],
-        technologies: ["React", "Node.js", "Google Maps API", "Stripe"],
-        team: ["Full-stack Developer", "Mobile Developer", "Business Analyst"],
-        milestones: [
-          { name: "Platform Architecture", date: "2023-03", status: "completed" },
-          { name: "Booking System", date: "2023-05", status: "completed" },
-          { name: "Technician Network", date: "2023-07", status: "completed" },
-          { name: "Launch", date: "2023-08", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "norams-auto",
-      name: "Noram's Auto",
-      client: "Noram's Electronics",
-      category: "web",
-      status: "completed",
-      budget: "$85K",
-      timeline: "5 months",
-      completion: 100,
-      rating: 5,
-      description: "Professional auto repair website with booking system and service management for Santa Cruz",
-      image: "/images/norams-auto-screenshot.png",
-      logo: "/images/norams-logo-new.png",
-      tags: ["Auto Services", "Booking System", "Local Business", "Reviews"],
-      metrics: {
-        revenue: "$650K",
-        users: "8K+",
-        satisfaction: "95%",
-      },
-      featured: true,
-      previewUrl: "https://noramauto.com",
-      hasLivePreview: true,
-      details: {
-        overview: "Complete digital solution for auto repair shop with online booking and customer management.",
-        features: ["Online booking", "Service tracking", "Customer reviews", "Mobile optimization"],
-        technologies: ["Next.js", "Stripe", "Google APIs", "Tailwind CSS"],
-        team: ["Full-stack Developer", "UI/UX Designer", "Local SEO Specialist"],
-        milestones: [
-          { name: "Website Design", date: "2023-08", status: "completed" },
-          { name: "Booking System", date: "2023-10", status: "completed" },
-          { name: "Payment Integration", date: "2023-11", status: "completed" },
-          { name: "Launch", date: "2023-12", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "dreambox",
-      name: "Dreambox",
-      client: "Dreambox AI",
-      category: "web",
-      status: "completed",
-      budget: "$120K",
-      timeline: "6 months",
-      completion: 100,
-      rating: 5,
-      description: "AI platform for creating cinematic episodes from scripts with automated video generation",
-      image: "/images/dreambox-screenshot.png",
-      logo: "/images/dreambox-logo-new.png",
-      tags: ["AI", "Video Generation", "React", "Machine Learning"],
-      metrics: {
-        revenue: "$1.2M",
-        users: "12K+",
-        satisfaction: "97%",
-      },
-      featured: true,
-      previewUrl: "https://v0-advanced-ai-video-app.vercel.app/",
-      hasLivePreview: false,
-      details: {
-        overview:
-          "Revolutionary AI platform that transforms scripts into cinematic episodes using advanced machine learning.",
-        features: ["Script analysis", "Automated video generation", "Character creation", "Scene composition"],
-        technologies: ["React", "Python", "TensorFlow", "AWS", "FFmpeg"],
-        team: ["AI Engineer", "Frontend Developer", "Video Processing Specialist"],
-        milestones: [
-          { name: "AI Model Training", date: "2023-01", status: "completed" },
-          { name: "Platform Development", date: "2023-03", status: "completed" },
-          { name: "Video Pipeline", date: "2023-05", status: "completed" },
-          { name: "Launch", date: "2023-06", status: "completed" },
-        ],
-      },
-    },
-    // Rest of the projects
-    {
-      id: "nicfound",
-      name: "Nicfound",
-      client: "Nicfound Inc.",
-      category: "product",
-      status: "completed",
-      budget: "$150K",
-      timeline: "8 months",
-      completion: 100,
-      rating: 5,
-      description: "Smart tracking case for nicotine products with IoT integration and mobile app connectivity",
-      image: "/placeholder.svg?height=300&width=500",
-      logo: "/images/nicfound-logo.png",
-      tags: ["IoT", "Hardware", "Mobile App", "Cloud"],
-      metrics: {
-        revenue: "$2.1M",
-        users: "15K+",
-        satisfaction: "98%",
-      },
-      featured: true,
-      previewUrl: "https://nicfound.com",
-      hasLivePreview: true,
-      details: {
-        overview:
-          "Revolutionary smart case that tracks nicotine product usage with precision sensors and cloud analytics.",
-        features: ["Real-time tracking", "Mobile app integration", "Cloud analytics", "Battery optimization"],
-        technologies: ["IoT sensors", "React Native", "AWS IoT", "Node.js"],
-        team: ["Hardware Engineer", "Mobile Developer", "Cloud Architect"],
-        milestones: [
-          { name: "Hardware Design", date: "2023-01", status: "completed" },
-          { name: "Mobile App", date: "2023-03", status: "completed" },
-          { name: "Cloud Platform", date: "2023-05", status: "completed" },
-          { name: "Production", date: "2023-07", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "pufftrak",
-      name: "Pufftrak",
-      client: "Health Tech Solutions",
-      category: "product",
-      status: "completed",
-      budget: "$200K",
-      timeline: "10 months",
-      completion: 100,
-      rating: 5,
-      description: "Advanced taper device for smoking cessation with precision control and health monitoring",
-      image: "/images/pufftrak-device-1.png",
-      logo: "/images/pufftrak-logo.png",
-      tags: ["Medical Device", "Precision Engineering", "App Integration"],
-      metrics: {
-        revenue: "$1.8M",
-        users: "8K+",
-        satisfaction: "96%",
-      },
-      featured: true,
-      previewUrl: "https://pufftrak.com",
-      hasLivePreview: true,
-      details: {
-        overview:
-          "Medical-grade device designed to help users gradually reduce nicotine intake with precision control.",
-        features: ["Precision dosing", "Health tracking", "Progress analytics", "Medical compliance"],
-        technologies: ["Precision mechanics", "Bluetooth", "React Native", "Health APIs"],
-        team: ["Mechanical Engineer", "Software Developer", "Medical Consultant"],
-        milestones: [
-          { name: "Medical Research", date: "2022-08", status: "completed" },
-          { name: "Device Design", date: "2022-12", status: "completed" },
-          { name: "App Development", date: "2023-04", status: "completed" },
-          { name: "FDA Approval", date: "2023-06", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "motion-records",
-      name: "Motion Records",
-      client: "Motion Records LLC",
-      category: "web",
-      status: "completed",
-      budget: "$110K",
-      timeline: "7 months",
-      completion: 100,
-      rating: 5,
-      description: "Full-service marketing agency platform for artists with campaign management and analytics",
-      image: "/images/motion-records-screenshot.png",
-      logo: "/images/motion-records-logo.png",
-      tags: ["Marketing Agency", "Artists", "Campaigns", "Analytics"],
-      metrics: {
-        revenue: "$900K",
-        users: "5K+",
-        satisfaction: "96%",
-      },
-      featured: true,
-      previewUrl: "https://v0-streamline-landing-page-gules-two.vercel.app/",
-      hasLivePreview: false,
-      details: {
-        overview: "Comprehensive marketing agency platform designed specifically for artists of all sizes.",
-        features: ["Campaign management", "Analytics dashboard", "Artist onboarding", "Success tracking"],
-        technologies: ["Next.js", "React", "Analytics APIs", "CRM Integration"],
-        team: ["Full-stack Developer", "Marketing Strategist", "UI/UX Designer"],
-        milestones: [
-          { name: "Platform Design", date: "2024-01", status: "completed" },
-          { name: "Campaign Tools", date: "2024-03", status: "completed" },
-          { name: "Analytics Integration", date: "2024-05", status: "completed" },
-          { name: "Launch", date: "2024-07", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "sperm-league",
-      name: "Sperm League",
-      client: "Entertainment Ventures",
-      category: "web",
-      status: "completed",
-      budget: "$75K",
-      timeline: "4 months",
-      completion: 100,
-      rating: 5,
-      description: "Interactive racing game platform with competitive leaderboards and real-time multiplayer",
-      image: "/placeholder.svg?height=300&width=500",
-      logo: "/images/sperm-league-logo.png",
-      tags: ["Gaming", "Interactive", "Real-time", "Entertainment"],
-      metrics: {
-        revenue: "$400K",
-        users: "25K+",
-        satisfaction: "94%",
-      },
-      featured: false,
-      previewUrl: "https://v0-sperm-racing-website-orpin.vercel.app/",
-      hasLivePreview: false,
-      details: {
-        overview: "Unique interactive racing game platform featuring competitive gameplay and social features.",
-        features: ["Real-time racing", "Leaderboards", "Multiplayer support", "Achievement system"],
-        technologies: ["React", "WebSocket", "Node.js", "Real-time APIs"],
-        team: ["Game Developer", "Frontend Developer", "Backend Engineer"],
-        milestones: [
-          { name: "Game Mechanics", date: "2024-03", status: "completed" },
-          { name: "Multiplayer System", date: "2024-05", status: "completed" },
-          { name: "UI/UX Polish", date: "2024-06", status: "completed" },
-          { name: "Launch", date: "2024-07", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "chatchill",
-      name: "ChatChill",
-      client: "ChatChill Inc.",
-      category: "mobile",
-      status: "completed",
-      budget: "$140K",
-      timeline: "7 months",
-      completion: 100,
-      rating: 5,
-      description: "Social messaging app with advanced privacy features and interest-based community matching",
-      image: "/images/chatchill-screenshot.png",
-      logo: "/images/chatchill-logo-new.png",
-      tags: ["Mobile App", "Social", "Privacy", "Real-time"],
-      metrics: {
-        revenue: "$600K",
-        users: "50K+",
-        satisfaction: "95%",
-      },
-      previewUrl: "https://chatchill.io",
-      hasLivePreview: true,
-      details: {
-        overview: "Next-generation messaging app with focus on privacy, security, and interest-based connections.",
-        features: ["End-to-end encryption", "Interest matching", "Group management", "Media sharing"],
-        technologies: ["React Native", "Node.js", "Socket.io", "MongoDB"],
-        team: ["Mobile Developer", "Backend Developer", "Security Engineer"],
-        milestones: [
-          { name: "Core Features", date: "2023-01", status: "completed" },
-          { name: "Security Implementation", date: "2023-03", status: "completed" },
-          { name: "Interest System", date: "2023-05", status: "completed" },
-          { name: "App Store Launch", date: "2023-07", status: "completed" },
-        ],
-      },
-    },
-    {
-      id: "bevel-razors",
-      name: "Bevel",
-      client: "Bevel Inc.",
-      category: "web",
-      status: "completed",
-      budget: "$95K",
-      timeline: "5 months",
-      completion: 100,
-      rating: 4,
-      description: "Premium e-commerce platform and brand website for luxury shaving products and grooming essentials",
-      image: "/images/bevel-screenshot.png",
-      logo: "/images/bevel-logo-new.svg",
-      tags: ["E-commerce", "Branding", "Premium", "Grooming"],
-      metrics: {
-        revenue: "$800K",
-        users: "18K+",
-        satisfaction: "89%",
-      },
-      previewUrl: "https://getbevel.com/",
-      hasLivePreview: true,
-      details: {
-        overview:
-          "Premium e-commerce experience for luxury shaving products with focus on user experience and brand storytelling.",
-        features: ["Product showcase", "Subscription service", "User accounts", "Mobile optimization"],
-        technologies: ["Shopify Plus", "React", "GraphQL", "Stripe"],
-        team: ["E-commerce Developer", "UI/UX Designer", "Brand Strategist"],
-        milestones: [
-          { name: "Brand Strategy", date: "2023-02", status: "completed" },
-          { name: "Platform Development", date: "2023-04", status: "completed" },
-          { name: "Subscription System", date: "2023-06", status: "completed" },
-          { name: "Launch", date: "2023-07", status: "completed" },
-        ],
-      },
-    },
-  ]
+  // Use API projects, mapped to UI format
+  const projects = apiProjects.map(mapApiProjectToUI)
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
@@ -369,6 +134,30 @@ export default function ProjectsPage() {
 
     return matchesSearch && matchesFilter
   })
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffcc66] mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading projects...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error && projects.length === 0) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-400 mb-2">Error loading projects</p>
+          <p className="text-gray-400 text-sm">{error}</p>
+        </div>
+      </div>
+    )
+  }
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
