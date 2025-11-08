@@ -7,8 +7,6 @@ import { CodeRain } from "@/components/code-rain"
 import { SpinningEarth } from "@/components/spinning-earth"
 import {
   Briefcase,
-  MapPin,
-  Clock,
   DollarSign,
   TrendingUp,
   Users,
@@ -16,8 +14,9 @@ import {
   Heart,
   Rocket,
   Globe,
-  Award,
   ChevronRight,
+  Mail,
+  Send,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -234,100 +233,47 @@ export default function CareersPage() {
 
         {/* Open Positions Section */}
         <section id="open-positions" className="py-20 px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="relative"
             >
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-                <span className="text-foreground">Open </span>
-                <span className="text-webelio-tertiary">Positions</span>
-              </h2>
-              <div className="h-px w-24 bg-gradient-to-r from-transparent via-webelio-tertiary to-transparent mx-auto" />
-              <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto">
-                Explore exciting opportunities across various departments
-              </p>
-            </motion.div>
-
-            <div className="space-y-6">
-              {openPositions.map((position, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.05 * index }}
-                  viewport={{ once: true }}
-                  className="relative group"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/10 to-transparent rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                  <div className="relative bg-background/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 hover:border-webelio-tertiary/50 transition-colors">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                      <div className="flex-1 space-y-4">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                          <h3 className="text-2xl font-bold text-white">{position.title}</h3>
-                          <span className="inline-flex items-center px-3 py-1 bg-webelio-tertiary/20 border border-webelio-tertiary/30 rounded-full text-xs text-webelio-tertiary w-fit">
-                            {position.department}
-                          </span>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4" />
-                            <span>{position.location}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Clock className="w-4 h-4" />
-                            <span>{position.type}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Award className="w-4 h-4" />
-                            <span>{position.experience}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                          {position.skills.map((skill, skillIndex) => (
-                            <span
-                              key={skillIndex}
-                              className="px-3 py-1 bg-background/50 border border-border/50 rounded-lg text-xs text-foreground"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      <Link href="/consultation">
-                        <Button className="bg-gradient-to-r from-webelio-tertiary to-webelio-secondary hover:from-webelio-tertiary/80 hover:to-webelio-secondary/80 text-webelio-primary font-medium whitespace-nowrap">
-                          Apply Now
-                          <ChevronRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="mt-12 text-center"
-            >
-              <p className="text-muted-foreground mb-4">Don't see the right role? We're always looking for talent!</p>
-              <Link href="/consultation">
+              <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl" />
+              <div className="relative bg-background/50 backdrop-blur-sm border border-border/50 rounded-3xl p-12 text-center space-y-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-full flex items-center justify-center mx-auto">
+                  <Mail className="w-8 h-8 text-webelio-tertiary" />
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold">
+                  <span className="text-foreground">Ready to </span>
+                  <span className="text-webelio-tertiary">Join Us?</span>
+                </h2>
+                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                  We're always looking for talented individuals to join our team. Send us your resume and let's explore
+                  opportunities together.
+                </p>
+                <div className="bg-webelio-tertiary/10 border border-webelio-tertiary/30 rounded-2xl p-6 max-w-md mx-auto">
+                  <p className="text-sm text-muted-foreground mb-3">Send your resume to:</p>
+                  <a
+                    href="mailto:hr@sedawk.in"
+                    className="inline-flex items-center gap-2 text-2xl font-semibold text-webelio-tertiary hover:text-webelio-secondary transition-colors"
+                  >
+                    <Mail className="w-6 h-6" />
+                    hr@sedawk.in
+                  </a>
+                </div>
                 <Button
-                  variant="outline"
-                  className="border-webelio-tertiary/50 text-webelio-tertiary hover:bg-webelio-tertiary/10 bg-transparent"
+                  asChild
+                  className="bg-gradient-to-r from-webelio-tertiary to-webelio-secondary hover:from-webelio-tertiary/80 hover:to-webelio-secondary/80 text-webelio-primary font-medium px-8 py-6 text-lg"
                 >
-                  Send Us Your Resume
+                  <a href="mailto:hr@sedawk.in">
+                    <Send className="w-5 h-5 mr-2" />
+                    Send Your Resume
+                  </a>
                 </Button>
-              </Link>
+              </div>
             </motion.div>
           </div>
         </section>
@@ -404,15 +350,18 @@ export default function CareersPage() {
                   <span className="text-webelio-tertiary">with us?</span>
                 </h2>
                 <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  Join a team of passionate innovators building the future of technology. Apply today and let's create
-                  something amazing together.
+                  Join a team of passionate innovators building the future of technology. Send us your resume today and
+                  let's create something amazing together.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <Button
-                    onClick={() => document.getElementById("open-positions")?.scrollIntoView({ behavior: "smooth" })}
+                    asChild
                     className="bg-gradient-to-r from-webelio-tertiary to-webelio-secondary hover:from-webelio-tertiary/80 hover:to-webelio-secondary/80 text-webelio-primary font-medium px-8 py-4 text-lg"
                   >
-                    Browse Openings
+                    <a href="mailto:hr@sedawk.in">
+                      <Send className="w-5 h-5 mr-2" />
+                      Email Your Resume
+                    </a>
                   </Button>
                   <Link href="/about">
                     <Button
