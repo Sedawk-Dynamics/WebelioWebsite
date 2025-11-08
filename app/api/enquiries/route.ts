@@ -31,7 +31,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
 
-    // If external API URL is configured, forward the request
     const externalApiUrl = process.env.NEXT_PUBLIC_API_URL
 
     if (externalApiUrl) {
@@ -44,21 +43,34 @@ export async function POST(request: NextRequest) {
           body: JSON.stringify(body),
         })
 
+        // Check if response is JSON before parsing
+        const contentType = response.headers.get("content-type")
+
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || `External API error: ${response.status}`)
+          console.error(`External API returned status ${response.status}`)
+          throw new Error(`External API error: ${response.status}`)
         }
 
-        const result = await response.json()
-        return NextResponse.json(result, { status: 200 })
+        if (contentType && contentType.includes("application/json")) {
+          const result = await response.json()
+          return NextResponse.json(result, { status: 200 })
+        } else {
+          // Response is not JSON (likely HTML error page)
+          console.error("External API returned non-JSON response")
+          throw new Error("External API returned invalid response format")
+        }
       } catch (error) {
-        console.error("External API error:", error)
+        console.error("External API failed, using local handling:", error instanceof Error ? error.message : error)
         // Fall through to local handling if external API fails
       }
     }
 
     // Local handling: log enquiry data (in production, save to database)
-    console.log("New enquiry received:", body)
+    console.log("Processing enquiry locally:", {
+      service: body.service,
+      businessName: body.businessName,
+      email: body.email,
+    })
 
     // Create a mock response (replace with actual database save in production)
     const enquiry = {
