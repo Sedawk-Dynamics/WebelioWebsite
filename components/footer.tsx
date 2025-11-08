@@ -50,7 +50,7 @@ export function Footer() {
         { label: "Portfolio", href: "/portfolio" },
         { label: "Projects", href: "/projects" },
         { label: "Process", href: "/process" },
-        { label: "Careers", href: "#" },
+        { label: "Careers", href: "/careers" },
         { label: "Blog", href: "#" },
       ],
     },
