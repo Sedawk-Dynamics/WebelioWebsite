@@ -200,4 +200,3 @@ export async function getCategories(): Promise<CategoriesResponse> {
 
   return response.json();
 }
-
