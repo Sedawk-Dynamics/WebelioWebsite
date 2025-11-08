@@ -212,7 +212,7 @@ export default function StartupKitPage() {
                   </Link>
 
                   <Link
-                    href="/startup-kit/portfolio"
+                    href="/projects"
                     className="px-8 py-4 bg-gray-800 text-white rounded-lg font-semibold text-lg hover:bg-gray-700 transition-all duration-300 border border-gray-700"
                   >
                     <span className="flex items-center gap-2">
