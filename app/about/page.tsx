@@ -7,6 +7,8 @@ import { CodeRain } from "@/components/code-rain"
 import { SpinningEarth } from "@/components/spinning-earth"
 import { Users, Target, Award, Globe, Rocket, Shield, TrendingUp, Heart } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export default function AboutPage() {
   const stats = [
@@ -160,7 +162,11 @@ export default function AboutPage() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl" />
                 <div className="relative bg-background/30 backdrop-blur-sm border border-border/50 rounded-3xl p-8">
-                  <img src="/modern-tech-office-teamwork-collaboration.jpg" alt="Webelio Team" className="rounded-2xl w-full h-auto" />
+                  <img
+                    src="/modern-tech-office-teamwork-collaboration.jpg"
+                    alt="Webelio Team"
+                    className="rounded-2xl w-full h-auto"
+                  />
                 </div>
               </motion.div>
             </div>
@@ -252,6 +258,30 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* Company Gallery Carousel Section */}
+        <section className="py-20 px-4 sm:px-6 bg-gradient-to-b from-transparent via-webelio-tertiary/5 to-transparent">
+          <div className="max-w-7xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+                <span className="text-foreground">Our </span>
+                <span className="text-webelio-tertiary">Team & Culture</span>
+              </h2>
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-webelio-tertiary to-transparent mx-auto" />
+              <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+                A glimpse into our vibrant workspace and the amazing people who make Webelio a great place to work
+              </p>
+            </motion.div>
+
+            <CompanyCarousel />
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-20 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
@@ -262,7 +292,7 @@ export default function AboutPage() {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl opacity-50" />
               <div className="relative bg-background/50 backdrop-blur-sm border border-border/50 rounded-3xl p-12 text-center space-y-6">
                 <h2 className="text-3xl sm:text-4xl font-bold">
                   <span className="text-foreground">Ready to build something </span>
@@ -293,5 +323,112 @@ export default function AboutPage() {
         <Footer />
       </div>
     </main>
+  )
+}
+
+// CompanyCarousel component
+function CompanyCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  const images = [
+    {
+      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic1-ULZVffzxxf4BRiMgZTNPU4eZQkBml4.jpg",
+      alt: "Webelio team celebrating together in the office",
+    },
+    {
+      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.37_ef14eb36-vyrSMHQ1HiJeWff3K6tcmfseXxp8ZM.jpg",
+      alt: "Festival celebrations at Webelio office",
+    },
+    {
+      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.14_489802c0-pL08osjj8nahWgwMUwjt9VaEztm78c.jpg",
+      alt: "Team members bonding during festival celebrations",
+    },
+    {
+      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.54.21_e2e96a9e-l9d3AjeI6tvRG27QXBglDwDuzU0BrJ.jpg",
+      alt: "Celebrating achievements and milestones",
+    },
+    {
+      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-11-03%20at%2021.18.01_3be246e5-OH5Re90ggF8lVCUYqJNEkvNezMn6uC.jpg",
+      alt: "Team appreciation and recognition moments",
+    },
+    {
+      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.12_59be8112-CYe5z6k3W5I8Ah7PmOuWQaSYHe48KA.jpg",
+      alt: "Celebrating festivals with sky lanterns",
+    },
+  ]
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="relative"
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl opacity-50" />
+
+      <div className="relative bg-background/30 backdrop-blur-sm border border-border/50 rounded-3xl p-4 sm:p-8">
+        {/* Main carousel container */}
+        <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
+          {/* Images */}
+          <div className="relative w-full h-full">
+            {images.map((image, index) => (
+              <motion.div
+                key={index}
+                initial={false}
+                animate={{
+                  opacity: index === currentIndex ? 1 : 0,
+                  scale: index === currentIndex ? 1 : 0.95,
+                }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0"
+              >
+                <img src={image.src || "/placeholder.svg"} alt={image.alt} className="w-full h-full object-cover" />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Navigation buttons */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all hover:scale-110 border border-webelio-tertiary/30"
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all hover:scale-110 border border-webelio-tertiary/30"
+            aria-label="Next image"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Dots indicator */}
+        <div className="flex items-center justify-center gap-2 mt-6">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`transition-all ${
+                index === currentIndex
+                  ? "w-8 h-2 bg-webelio-tertiary"
+                  : "w-2 h-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              } rounded-full`}
+              aria-label={`Go to image ${index + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
   )
 }
