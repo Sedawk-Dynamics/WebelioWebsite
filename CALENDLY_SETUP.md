@@ -122,9 +122,9 @@ After adding all 8 questions, verify they appear in this order:
 
 1. Create or edit `.env.local` file in your project root
 2. Add this line:
-   ```env
+   \`\`\`env
    NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/your-username/event-type-name
-   ```
+   \`\`\`
 3. Replace with your actual Calendly URL from Step 7
 4. Restart your development server
 
@@ -132,7 +132,7 @@ After adding all 8 questions, verify they appear in this order:
 
 Here's what the questions section should look like:
 
-```
+\`\`\`
 Questions Section:
 ┌─────────────────────────────────────┐
 │ Invitee Questions                   │
@@ -148,7 +148,7 @@ Questions Section:
 │                                     │
 │ [+ Add Question]                    │
 └─────────────────────────────────────┘
-```
+\`\`\`
 
 ### Question Type Reference
 
@@ -198,9 +198,9 @@ If your question keys are not a1-a8, you can find them by:
 
 Set your Calendly URL in your `.env.local` file:
 
-```env
+\`\`\`env
 NEXT_PUBLIC_CALENDLY_URL=https://calendly.com/your-username/your-event-type
-```
+\`\`\`
 
 Replace:
 - `your-username` with your Calendly username

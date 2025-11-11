@@ -18,6 +18,7 @@ import {
 import { NewsletterForm } from "./newsletter-form"
 import { FooterPopup } from "./footer-popup"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function Footer() {
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
@@ -31,20 +32,27 @@ export function Footer() {
       id: "services",
       title: "Services",
       items: [
-        "Mobile App Development",
-        "Web Development",
-        "Cross Platform Apps",
-        "IoT & Hardware",
-        "UI/UX Design",
-        "Cybersecurity",
-        "AI/ML Solutions",
-        "Software Automation",
+        { label: "Mobile App Development", href: "/services" },
+        { label: "Web Development", href: "/services" },
+        { label: "Cross Platform Apps", href: "/services" },
+        { label: "IoT & Hardware", href: "/services" },
+        { label: "UI/UX Design", href: "/services" },
+        { label: "Cybersecurity", href: "/services" },
+        { label: "AI/ML Solutions", href: "/services" },
+        { label: "Software Automation", href: "/services" },
       ],
     },
     {
       id: "company",
       title: "Company",
-      items: ["About", "Portfolio", "Projects", "Process", "Careers", "Blog"],
+      items: [
+        { label: "About", href: "/about" },
+        { label: "Portfolio", href: "/portfolio" },
+        { label: "Projects", href: "/projects" },
+        { label: "Process", href: "/process" },
+        { label: "Careers", href: "/careers" },
+        { label: "Blog", href: "#" },
+      ],
     },
   ]
 
@@ -121,12 +129,12 @@ export function Footer() {
                 <ul className="space-y-2">
                   {section.items.map((item, index) => (
                     <li key={index}>
-                      <a
-                        href="#"
+                      <Link
+                        href={item.href}
                         className="text-muted-foreground hover:text-webelio-tertiary transition-colors text-sm"
                       >
-                        {item}
-                      </a>
+                        {item.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
@@ -246,12 +254,16 @@ export function Footer() {
                         {section.items.map((item, index) => (
                           <motion.div
                             key={index}
-                            className="text-sm text-muted-foreground hover:text-webelio-tertiary transition-colors py-1"
                             initial={{ x: -10, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: index * 0.05 }}
                           >
-                            {item}
+                            <Link
+                              href={item.href}
+                              className="block text-sm text-muted-foreground hover:text-webelio-tertiary transition-colors py-1"
+                            >
+                              {item.label}
+                            </Link>
                           </motion.div>
                         ))}
                       </div>

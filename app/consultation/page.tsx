@@ -31,7 +31,6 @@ import {
   Cloud,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { InlineWidget } from "react-calendly"
 import { submitEnquiry } from "@/lib/api"
 
 type ConsultationData = {
@@ -51,7 +50,6 @@ type ConsultationData = {
 export default function ConsultationPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isGuest, setIsGuest] = useState(false)
-  const [showCalendly, setShowCalendly] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [consultationData, setConsultationData] = useState<ConsultationData>({
@@ -95,55 +93,50 @@ export default function ConsultationPage() {
     }
   }, [consultationData])
 
-  // Hide Calendly branding when widget loads
-  useEffect(() => {
-    if (!showCalendly) return
+  const buildCalendlyRedirectUrl = () => {
+    try {
+      const url = new URL(CALENDLY_URL)
 
-    const hideBranding = () => {
-      // Try multiple selectors to find and hide the branding
-      const selectors = [
-        'div[data-id="branding"]',
-        'a[href*="calendly.com"][href*="utm_medium=badge"]',
-        'a.VJL48qbQzWENTFAh1Knk',
-        '.jWSwi_R_Xl7kPjUhuQoo',
-        '._igrKj_5lj_5nWQu8DPw',
-      ]
+      if (consultationData.name) {
+        url.searchParams.set("name", consultationData.name)
+      }
+      if (consultationData.email) {
+        url.searchParams.set("email", consultationData.email)
+      }
 
-      selectors.forEach((selector) => {
-        const elements = document.querySelectorAll(selector)
-        elements.forEach((el) => {
-          if (el instanceof HTMLElement) {
-            el.style.display = 'none'
-            el.style.visibility = 'hidden'
-            el.style.opacity = '0'
-            el.style.height = '0'
-            el.style.width = '0'
-            el.style.overflow = 'hidden'
-            el.style.pointerEvents = 'none'
-          }
-        })
+      const customAnswers: Record<string, string | undefined> = {
+        a1: consultationData.company || undefined,
+        a2: consultationData.phone || undefined,
+        a3: consultationData.businessType || undefined,
+        a4: consultationData.companySize || undefined,
+        a5: consultationData.projectType.join(", ") || undefined,
+        a6: consultationData.budget || undefined,
+        a7: consultationData.timeline || undefined,
+        a8: consultationData.goals.join(", ") || undefined,
+      }
+
+      Object.entries(customAnswers).forEach(([key, value]) => {
+        if (value) {
+          url.searchParams.set(key, value)
+        }
       })
-    }
 
-    // Hide immediately and then check periodically as widget loads
-    hideBranding()
-    const interval = setInterval(hideBranding, 100)
+      const themeParams: Record<string, string> = {
+        background_color: "000000",
+        text_color: "ffffff",
+        primary_color: "10b981",
+      }
 
-    // Also listen for DOM changes
-    const observer = new MutationObserver(hideBranding)
-    const wrapper = document.querySelector('.calendly-widget-wrapper')
-    if (wrapper) {
-      observer.observe(wrapper, {
-        childList: true,
-        subtree: true,
+      Object.entries(themeParams).forEach(([key, value]) => {
+        url.searchParams.set(key, value)
       })
-    }
 
-    return () => {
-      clearInterval(interval)
-      observer.disconnect()
+      return url.toString()
+    } catch (error) {
+      console.error("Invalid Calendly URL:", error)
+      return CALENDLY_URL
     }
-  }, [showCalendly])
+  }
 
   const steps = [
     { id: "business", title: "Business", icon: Building, color: "emerald" },
@@ -340,8 +333,28 @@ export default function ConsultationPage() {
       localStorage.setItem("consultationCompleted", "true")
       localStorage.setItem("consultationData", JSON.stringify(consultationData))
 
-      // Show Calendly widget
-      setShowCalendly(true)
+      const calendlyRedirectUrl = buildCalendlyRedirectUrl()
+
+      window.open(calendlyRedirectUrl, "_blank", "noopener,noreferrer")
+
+      localStorage.removeItem("consultationCompleted")
+      localStorage.removeItem("consultationData")
+
+      setConsultationData({
+        businessType: "",
+        companySize: "",
+        budget: "",
+        projectType: [],
+        timeline: "",
+        goals: [],
+        name: "",
+        email: "",
+        company: "",
+        phone: "",
+        isGuest: false,
+      })
+      setCurrentStep(0)
+      window.dispatchEvent(new CustomEvent("hideProfileDropdown"))
     } catch (error) {
       console.error("Error submitting consultation:", error)
       setSubmitError(error instanceof Error ? error.message : "Failed to submit consultation. Please try again.")
@@ -678,7 +691,7 @@ export default function ConsultationPage() {
                   </div>
                 )}
 
-                {currentStep === 6 && !showCalendly && (
+                {currentStep === 6 && (
                   <div className="space-y-6">
                     <div className="text-center space-y-2">
                       <h2 className="text-2xl font-bold flex items-center justify-center">
@@ -738,54 +751,6 @@ export default function ConsultationPage() {
                   </div>
                 )}
 
-                {currentStep === 6 && showCalendly && (
-                  <div className="space-y-6">
-                    <div className="text-center space-y-2">
-                      <h2 className="text-2xl font-bold flex items-center justify-center">
-                        <Calendar className="w-6 h-6 mr-3 text-emerald-400" />
-                        Book Your Consultation
-                      </h2>
-                      <p className="text-gray-400">Select a time that works best for you</p>
-                    </div>
-
-                    <div className="w-full calendly-widget-wrapper" style={{ minHeight: "700px" }}>
-                      <InlineWidget
-                        url={CALENDLY_URL}
-                        styles={{
-                          height: "700px",
-                          width: "100%",
-                        }}
-                        pageSettings={{
-                          backgroundColor: "000000",
-                          hideEventTypeDetails: false,
-                          hideLandingPageDetails: false,
-                          primaryColor: "10b981",
-                          textColor: "ffffff",
-                        }}
-                        prefill={{
-                          // Basic contact info (automatically pre-filled by Calendly)
-                          name: consultationData.name || undefined,
-                          email: consultationData.email || undefined,
-                          firstName: consultationData.name?.split(" ")[0] || undefined,
-                          lastName: consultationData.name?.split(" ").slice(1).join(" ") || undefined,
-                          // Custom questions - These MUST match the question keys configured in your Calendly event type
-                          // IMPORTANT: Configure these 8 custom questions in your Calendly event type settings
-                          // Question keys must be: a1, a2, a3, a4, a5, a6, a7, a8
-                          customAnswers: {
-                            a1: consultationData.company || undefined, // Question: "Company Name"
-                            a2: consultationData.phone || undefined, // Question: "Phone Number"
-                            a3: consultationData.businessType || undefined, // Question: "Business Type"
-                            a4: consultationData.companySize || undefined, // Question: "Company Size"
-                            a5: consultationData.projectType.join(", ") || undefined, // Question: "Services Needed"
-                            a6: consultationData.budget || undefined, // Question: "Budget Range"
-                            a7: consultationData.timeline || undefined, // Question: "Timeline"
-                            a8: consultationData.goals.join(", ") || undefined, // Question: "Business Goals"
-                          },
-                        }}
-                      />
-                    </div>
-                  </div>
-                )}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -816,7 +781,7 @@ export default function ConsultationPage() {
                 Next Step
                 <ChevronRight className="w-4 h-4 ml-2" />
               </Button>
-            ) : !showCalendly ? (
+            ) : (
               <Button
                 onClick={handleSubmit}
                 className="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
@@ -825,7 +790,7 @@ export default function ConsultationPage() {
                 {isSubmitting ? "Submitting..." : "Book Consultation"}
                 {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
               </Button>
-            ) : null}
+            )}
           </div>
         </div>
       </div>
