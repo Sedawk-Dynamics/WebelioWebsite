@@ -17,9 +17,12 @@ import {
   ChevronRight,
   Mail,
   Send,
+  ChevronLeft,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
+import Image from "next/image"
 
 export default function CareersPage() {
   const benefits = [
@@ -134,6 +137,36 @@ export default function CareersPage() {
     },
   ]
 
+  // State for carousel
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  const companyImages = [
+    {
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic1-Fr8xopYEFjDBIkLhaviaaPJGVAx9sB.jpg",
+      caption: "Our Amazing Team",
+    },
+    {
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.37_ef14eb36-NcGPplifEL8a0HPehmDvVqd7Cl7O7n.jpg",
+      caption: "Festival Celebrations",
+    },
+  ]
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % companyImages.length)
+    }, 5000) // Change image every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [companyImages.length])
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % companyImages.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + companyImages.length) % companyImages.length)
+  }
+
   return (
     <main className="relative min-h-screen bg-black text-foreground overflow-x-hidden">
       {/* Background layers */}
@@ -228,6 +261,120 @@ export default function CareersPage() {
                 </motion.div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="py-20 px-4 sm:px-6">
+          <div className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+                <span className="text-foreground">Life at </span>
+                <span className="text-webelio-tertiary">Webelio</span>
+              </h2>
+              <div className="h-px w-24 bg-gradient-to-r from-transparent via-webelio-tertiary to-transparent mx-auto" />
+              <p className="text-muted-foreground text-lg mt-6 max-w-2xl mx-auto">
+                Experience the vibrant culture and team spirit that makes Webelio special
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="relative group"
+            >
+              {/* Carousel Container */}
+              <div
+                className="relative overflow-hidden rounded-3xl"
+                onMouseEnter={() => {
+                  const interval = setInterval(() => {
+                    setCurrentImageIndex((prev) => (prev + 1) % companyImages.length)
+                  }, 5000)
+                  return () => clearInterval(interval)
+                }}
+              >
+                {/* Images */}
+                <div className="relative aspect-[16/9] w-full">
+                  {companyImages.map((image, index) => (
+                    <motion.div
+                      key={index}
+                      initial={false}
+                      animate={{
+                        opacity: currentImageIndex === index ? 1 : 0,
+                        scale: currentImageIndex === index ? 1 : 1.1,
+                      }}
+                      transition={{ duration: 0.7, ease: "easeInOut" }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={image.url || "/placeholder.svg"}
+                        alt={image.caption}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                      />
+                      {/* Overlay gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Caption */}
+                      <div className="absolute bottom-0 left-0 right-0 p-8">
+                        <motion.p
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{
+                            opacity: currentImageIndex === index ? 1 : 0,
+                            y: currentImageIndex === index ? 0 : 20,
+                          }}
+                          transition={{ duration: 0.5, delay: 0.2 }}
+                          className="text-2xl font-semibold text-white"
+                        >
+                          {image.caption}
+                        </motion.p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Navigation Arrows */}
+                <button
+                  onClick={prevImage}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-black/70 hover:border-webelio-tertiary/50 transition-all opacity-0 group-hover:opacity-100"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-black/70 hover:border-webelio-tertiary/50 transition-all opacity-0 group-hover:opacity-100"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+
+                {/* Dots Indicator */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {companyImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        currentImageIndex === index ? "bg-webelio-tertiary w-8" : "bg-white/50 hover:bg-white/80"
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl -z-10 opacity-50" />
+            </motion.div>
           </div>
         </section>
 
