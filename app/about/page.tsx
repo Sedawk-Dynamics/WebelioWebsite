@@ -7,7 +7,7 @@ import { CodeRain } from "@/components/code-rain"
 import { SpinningEarth } from "@/components/spinning-earth"
 import { Users, Target, Award, Globe, Rocket, Shield, TrendingUp, Heart } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export default function AboutPage() {
@@ -329,6 +329,7 @@ export default function AboutPage() {
 // CompanyCarousel component
 function CompanyCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   const images = [
     {
@@ -357,6 +358,15 @@ function CompanyCarousel() {
     },
   ]
 
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev + 1) % images.length)
+      }, 5000)
+      return () => clearInterval(interval)
+    }
+  }, [isPaused, images.length])
+
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length)
   }
@@ -376,9 +386,11 @@ function CompanyCarousel() {
       <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl opacity-50" />
 
       <div className="relative bg-background/30 backdrop-blur-sm border border-border/50 rounded-3xl p-4 sm:p-8">
-        {/* Main carousel container */}
-        <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
-          {/* Images */}
+        <div
+          className="relative aspect-video w-full overflow-hidden rounded-2xl"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
           <div className="relative w-full h-full">
             {images.map((image, index) => (
               <motion.div
@@ -396,7 +408,6 @@ function CompanyCarousel() {
             ))}
           </div>
 
-          {/* Navigation buttons */}
           <button
             onClick={prevSlide}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white p-3 rounded-full transition-all hover:scale-110 border border-webelio-tertiary/30"
@@ -413,7 +424,6 @@ function CompanyCarousel() {
           </button>
         </div>
 
-        {/* Dots indicator */}
         <div className="flex items-center justify-center gap-2 mt-6">
           {images.map((_, index) => (
             <button
