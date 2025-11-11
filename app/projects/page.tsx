@@ -26,7 +26,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { getProjects, getCategories, type Project, type Category } from "@/lib/api"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// API_BASE_URL is no longer needed for file URLs since backend returns full URLs
 
 export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -215,8 +215,8 @@ export default function ProjectsPage() {
       completion: project.projectStatus === 'completed' ? 100 : project.projectStatus === 'active' ? 50 : 0,
       rating: 5, // Default
       description: project.projectOverview,
-      image: project.companyLogo ? `${API_BASE_URL}${project.companyLogo}` : "/placeholder.svg?height=300&width=500",
-      logo: project.companyLogo ? `${API_BASE_URL}${project.companyLogo}` : "/placeholder-logo.svg",
+      image: project.companyLogo || "/placeholder.svg?height=300&width=500",
+      logo: project.companyLogo || "/placeholder-logo.svg",
       tags: project.technologiesUsed.slice(0, 4),
       metrics: project.projectMetrics || {
         revenue: 'N/A',
@@ -239,9 +239,9 @@ export default function ProjectsPage() {
           : [],
       },
       files: {
-        visitingCard: project.visitingCard ? `${API_BASE_URL}${project.visitingCard}` : null,
-        letterhead: project.letterhead ? `${API_BASE_URL}${project.letterhead}` : null,
-        companyProfile: project.companyProfile ? `${API_BASE_URL}${project.companyProfile}` : null,
+        visitingCard: project.visitingCard || null,
+        letterhead: project.letterhead || null,
+        companyProfile: project.companyProfile || null,
       },
     }
   }
