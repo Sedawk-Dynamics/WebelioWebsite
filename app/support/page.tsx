@@ -18,7 +18,7 @@ export default function SupportPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "Hello! I'm your AI support assistant for Webelio (a brand of Sedawk Dynamics Pvt Ltd). I can help you with questions about our services, pricing, technologies, timelines, and more. How can I help you today?",
+      text: "Hello! I'm your AI support assistant for Webelio (a brand of Sedawk Dynamics Pvt Ltd). I can help you with questions about our company, services, pricing, and technologies. I can also explain tech concepts and how they relate to Webelio's expertise. How can I help you today?",
       sender: "bot",
       timestamp: new Date(),
     },
