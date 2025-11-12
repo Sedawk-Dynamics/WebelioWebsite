@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
@@ -18,13 +18,34 @@ export default function SupportPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "Hello! I'm your AI support assistant. How can I help you today?",
+      text: "Hello! I'm your AI support assistant for Webelio (a brand of Sedawk Dynamics Pvt Ltd). I can help you with questions about our services, pricing, technologies, timelines, and more. How can I help you today?",
       sender: "bot",
       timestamp: new Date(),
     },
   ])
   const [inputMessage, setInputMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+
+  const scrollToBottom = () => {
+    // Scroll the messages container, not the entire page
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      })
+    }
+  }
+
+  useEffect(() => {
+    // Scroll to bottom when messages or typing state changes
+    // Small delay to ensure DOM is updated
+    const timeoutId = setTimeout(() => {
+      scrollToBottom()
+    }, 50)
+    
+    return () => clearTimeout(timeoutId)
+  }, [messages, isTyping])
 
   const faqs = [
     {
@@ -81,43 +102,57 @@ export default function SupportPage() {
       timestamp: new Date(),
     }
 
-    setMessages((prev) => [...prev, userMessage])
+    const currentInput = inputMessage
     setInputMessage("")
     setIsTyping(true)
 
-    // Simulate bot response
-    setTimeout(() => {
+    try {
+      // Prepare conversation history for context (excluding the current message)
+      const conversationHistory = messages.map((msg) => ({
+        role: msg.sender === "user" ? "user" as const : "assistant" as const,
+        content: msg.text,
+      }))
+      
+      // Add user message to UI immediately
+      setMessages((prev) => [...prev, userMessage])
+
+      // Call the API
+      const response = await fetch("/api/support/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: currentInput,
+          conversationHistory: conversationHistory,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getBotResponse(inputMessage),
+        text: data.message || "I apologize, but I couldn't generate a response. Please try again.",
         sender: "bot",
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, botMessage])
+    } catch (error) {
+      console.error("Error sending message:", error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or contact us directly at info@sedawk.in or call +91 97735 96863.",
+        sender: "bot",
+        timestamp: new Date(),
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
       setIsTyping(false)
-    }, 1500)
-  }
-
-  const getBotResponse = (message: string): string => {
-    const lowerMessage = message.toLowerCase()
-
-    if (lowerMessage.includes("price") || lowerMessage.includes("cost") || lowerMessage.includes("budget")) {
-      return "Our pricing varies based on project scope and complexity. For a detailed quote, I'd recommend booking a free consultation where we can discuss your specific needs. Would you like me to help you schedule one?"
     }
-
-    if (lowerMessage.includes("timeline") || lowerMessage.includes("how long")) {
-      return "Project timelines depend on the complexity and scope. Simple websites typically take 2-4 weeks, while complex applications can take 8-16 weeks. What type of project are you considering?"
-    }
-
-    if (lowerMessage.includes("consultation") || lowerMessage.includes("meeting")) {
-      return "I'd be happy to help you schedule a free consultation! You can book directly through our consultation page, or I can connect you with our team. What works better for you?"
-    }
-
-    if (lowerMessage.includes("support") || lowerMessage.includes("maintenance")) {
-      return "We offer comprehensive support packages including updates, security monitoring, and technical support starting at $299/month. Would you like to know more about our support options?"
-    }
-
-    return "That's a great question! I'd be happy to connect you with one of our specialists who can provide detailed information. Would you like me to schedule a call, or do you have any other questions I can help with right now?"
   }
 
   return (
@@ -160,8 +195,11 @@ export default function SupportPage() {
             {/* Chat Header */}
             <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border-b border-gray-700 p-6">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center">
-                  <Bot className="w-6 h-6 text-white" />
+                <div className="relative">
+                  <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-emerald-500/30 ring-offset-2 ring-offset-gray-800">
+                    <Bot className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-400 rounded-full border-2 border-gray-800 animate-pulse" />
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white">Support Assistant</h3>
@@ -174,7 +212,11 @@ export default function SupportPage() {
             </div>
 
             {/* Messages */}
-            <div className="h-96 overflow-y-auto p-6 space-y-4">
+            <div 
+              ref={messagesContainerRef}
+              className="h-96 overflow-y-auto p-6 space-y-4"
+              style={{ scrollBehavior: "smooth" }}
+            >
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
@@ -187,14 +229,16 @@ export default function SupportPage() {
                     className={`flex items-start space-x-3 max-w-xs lg:max-w-md ${message.sender === "user" ? "flex-row-reverse space-x-reverse" : ""}`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        message.sender === "user" ? "bg-blue-500" : "bg-gradient-to-r from-emerald-500 to-green-500"
+                      className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        message.sender === "user" 
+                          ? "bg-blue-500 shadow-md" 
+                          : "bg-gradient-to-r from-emerald-500 to-green-500 shadow-md"
                       }`}
                     >
                       {message.sender === "user" ? (
-                        <User className="w-4 h-4 text-white" />
+                        <User className="w-5 h-5 text-white" />
                       ) : (
-                        <Bot className="w-4 h-4 text-white" />
+                        <Bot className="w-5 h-5 text-white" />
                       )}
                     </div>
                     <div
@@ -202,7 +246,7 @@ export default function SupportPage() {
                         message.sender === "user" ? "bg-blue-500 text-white" : "bg-gray-700 text-gray-100"
                       }`}
                     >
-                      <p className="text-sm leading-relaxed">{message.text}</p>
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.text}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -215,8 +259,8 @@ export default function SupportPage() {
                   className="flex justify-start"
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center">
-                      <Bot className="w-4 h-4 text-white" />
+                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                      <Bot className="w-5 h-5 text-white" />
                     </div>
                     <div className="bg-gray-700 px-4 py-3 rounded-2xl">
                       <div className="flex space-x-1">
