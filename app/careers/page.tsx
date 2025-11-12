@@ -17,14 +17,229 @@ import {
   ChevronRight,
   Mail,
   Send,
-  ChevronLeft,
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
 import Image from "next/image"
+import { useState } from "react"
 
 export default function CareersPage() {
+  const [hoveredImage, setHoveredImage] = useState<number | null>(null)
+  
+  // Company images with varied sizes - carefully arranged to fill gaps
+  // Layout pattern: Each row should sum to 4 columns on desktop, 3 on tablet, 2 on mobile
+  const companyImages = [
+    {
+      url: "/images/careers-images/pic1.jpg",
+      caption: "Team Celebration",
+      mobileSpan: "col-span-2 row-span-2",
+      desktopSpan: "lg:col-span-2 lg:row-span-2",
+    },
+    {
+      url: "/images/careers-images/DSC08767.JPG",
+      caption: "Team Photo",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/IMG_0190.jpg",
+      caption: "Team Moments",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-2",
+    },
+    {
+      url: "/images/careers-images/PXL_20250907_055558675.jpg",
+      caption: "Office Gathering",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250802_090301905.jpg",
+      caption: "Team Together",
+      mobileSpan: "col-span-2 row-span-1",
+      desktopSpan: "lg:col-span-2 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250802_070751728.jpg",
+      caption: "Special Moments",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250802_070735729.jpg",
+      caption: "Team Bonding",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250712_124629748.jpg",
+      caption: "Happy Times",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/20250707_183014.jpg",
+      caption: "Team Fun",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-2",
+    },
+    {
+      url: "/images/careers-images/20250707_175253.jpg",
+      caption: "Celebration",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/20250707_175251.jpg",
+      caption: "Team Spirit",
+      mobileSpan: "col-span-2 row-span-1",
+      desktopSpan: "lg:col-span-2 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250627_142325747.jpg",
+      caption: "Office Life",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/20250623_183809.jpg",
+      caption: "Memories",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250620_122730957.jpg",
+      caption: "Team Collaboration",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/20250620_175123.jpg",
+      caption: "Life at Webelio",
+      mobileSpan: "col-span-2 row-span-1",
+      desktopSpan: "lg:col-span-2 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250620_085606706.jpg",
+      caption: "Team Gathering",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250620_085359799.jpg",
+      caption: "Office Celebration",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250620_085357513.jpg",
+      caption: "Team Moments",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250513_060746105.jpg",
+      caption: "Birthday Celebrations",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-2",
+    },
+    {
+      url: "/images/careers-images/PXL_20250513_060742970.jpg",
+      caption: "Team Together",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250509_122504467.jpg",
+      caption: "Office Fun",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/PXL_20250505_141349262.jpg",
+      caption: "Team Outing",
+      mobileSpan: "col-span-2 row-span-1",
+      desktopSpan: "lg:col-span-2 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-10-18 at 08.27.37_ef14eb36.jpg",
+      caption: "Office Gathering",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-10-18 at 08.27.12_59be8112.jpg",
+      caption: "Birthday Party",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-10-18 at 08.54.21_e2e96a9e.jpg",
+      caption: "Team Celebration",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-11-03 at 21.18.01_3be246e5.jpg",
+      caption: "Celebration Time",
+      mobileSpan: "col-span-2 row-span-1",
+      desktopSpan: "lg:col-span-2 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.49_872c91e2.jpg",
+      caption: "Team Fun",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.51_cfb685fa.jpg",
+      caption: "Office Life",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.53_9f76e14e.jpg",
+      caption: "Team Bonding",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.58_496604b4.jpg",
+      caption: "Special Moments",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-07-08 at 00.55.21_7780d75f.jpg",
+      caption: "Team Together",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-2",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-07-08 at 00.55.08_81d613ae.jpg",
+      caption: "Happy Times",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-07-07 at 19.59.13_9b4fdd4a.jpg",
+      caption: "Team Spirit",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-06-20 at 22.08.59_75ce6f0b.jpg",
+      caption: "Memories",
+      mobileSpan: "col-span-1 row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-1",
+    },
+    {
+      url: "/images/careers-images/WhatsApp Image 2025-06-20 at 22.09.02_7b1a01ef.jpg",
+      caption: "Life at Webelio",
+      mobileSpan: "col-span-2 row-span-1",
+      desktopSpan: "lg:col-span-2 lg:row-span-1",
+    },
+  ]
   const benefits = [
     {
       icon: TrendingUp,
@@ -137,35 +352,6 @@ export default function CareersPage() {
     },
   ]
 
-  // State for carousel
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  const companyImages = [
-    {
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic1-Fr8xopYEFjDBIkLhaviaaPJGVAx9sB.jpg",
-      caption: "Our Amazing Team",
-    },
-    {
-      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.37_ef14eb36-NcGPplifEL8a0HPehmDvVqd7Cl7O7n.jpg",
-      caption: "Festival Celebrations",
-    },
-  ]
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % companyImages.length)
-    }, 5000) // Change image every 5 seconds
-
-    return () => clearInterval(interval)
-  }, [companyImages.length])
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % companyImages.length)
-  }
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + companyImages.length) % companyImages.length)
-  }
 
   return (
     <main className="relative min-h-screen bg-black text-foreground overflow-x-hidden">
@@ -288,92 +474,91 @@ export default function CareersPage() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="relative group"
+              className="relative"
             >
-              {/* Carousel Container */}
-              <div
-                className="relative overflow-hidden rounded-3xl"
-                onMouseEnter={() => {
-                  const interval = setInterval(() => {
-                    setCurrentImageIndex((prev) => (prev + 1) % companyImages.length)
-                  }, 5000)
-                  return () => clearInterval(interval)
-                }}
-              >
-                {/* Images */}
-                <div className="relative aspect-[16/9] w-full">
+              {/* Collage Grid Container */}
+              <div className="relative overflow-hidden rounded-3xl bg-background/20 backdrop-blur-sm border border-border/50 p-1 sm:p-2">
+                {/* Mobile: 2 columns, Tablet: 3 columns, Desktop: 4 columns - Varied sizes with dense packing to fill gaps */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-2 auto-rows-[minmax(150px,auto)]" style={{ gridAutoFlow: 'dense' }}>
                   {companyImages.map((image, index) => (
                     <motion.div
                       key={index}
-                      initial={false}
-                      animate={{
-                        opacity: currentImageIndex === index ? 1 : 0,
-                        scale: currentImageIndex === index ? 1 : 1.1,
-                      }}
-                      transition={{ duration: 0.7, ease: "easeInOut" }}
-                      className="absolute inset-0"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, delay: 0.05 * (index % 10) }}
+                      viewport={{ once: true }}
+                      onMouseEnter={() => setHoveredImage(index)}
+                      onMouseLeave={() => setHoveredImage(null)}
+                      className={`relative group overflow-hidden rounded-lg sm:rounded-xl cursor-pointer ${image.mobileSpan} ${image.desktopSpan} min-h-[150px] sm:min-h-[180px] z-10`}
                     >
-                      <Image
-                        src={image.url || "/placeholder.svg"}
-                        alt={image.caption}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                      />
-                      {/* Overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                      {/* Caption */}
-                      <div className="absolute bottom-0 left-0 right-0 p-8">
-                        <motion.p
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{
-                            opacity: currentImageIndex === index ? 1 : 0,
-                            y: currentImageIndex === index ? 0 : 20,
-                          }}
-                          transition={{ duration: 0.5, delay: 0.2 }}
-                          className="text-2xl font-semibold text-white"
-                        >
-                          {image.caption}
-                        </motion.p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Navigation Arrows */}
-                <button
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-black/70 hover:border-webelio-tertiary/50 transition-all opacity-0 group-hover:opacity-100"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-black/70 hover:border-webelio-tertiary/50 transition-all opacity-0 group-hover:opacity-100"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
-
-                {/* Dots Indicator */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {companyImages.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        currentImageIndex === index ? "bg-webelio-tertiary w-8" : "bg-white/50 hover:bg-white/80"
-                      }`}
-                      aria-label={`Go to image ${index + 1}`}
-                    />
-                  ))}
+                        <div className="relative w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
+                          <Image
+                            src={image.url || "/placeholder.svg"}
+                            alt={image.caption}
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            priority={index < 4}
+                          />
+                          {/* Gradient Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                          
+                          {/* Caption */}
+                          <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 z-10">
+                            <p className="text-white font-semibold text-xs sm:text-sm lg:text-base drop-shadow-lg">
+                              {image.caption}
+                            </p>
+                          </div>
+                          
+                          {/* Hover effect border */}
+                          <div className="absolute inset-0 border-2 border-webelio-tertiary/0 group-hover:border-webelio-tertiary/50 rounded-lg sm:rounded-xl transition-all duration-300 pointer-events-none" />
+                        </div>
+                      </motion.div>
+                    ))}
                 </div>
               </div>
 
+              {/* Enlarged Image Overlay on Hover */}
+              {hoveredImage !== null && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none"
+                  style={{
+                    background: "rgba(0, 0, 0, 0.75)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <div className="relative flex items-center justify-center p-4">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      className="relative w-[600px] h-[450px] sm:w-[700px] sm:h-[500px] lg:w-[800px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl border-2 border-webelio-tertiary/40 bg-black/60"
+                    >
+                      <Image
+                        src={companyImages[hoveredImage].url || "/placeholder.svg"}
+                        alt={companyImages[hoveredImage].caption}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 600px, (max-width: 1024px) 700px, 800px"
+                        priority
+                      />
+                      {/* Caption overlay */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+                        <p className="text-white font-semibold text-lg sm:text-xl lg:text-2xl drop-shadow-lg text-center">
+                          {companyImages[hoveredImage].caption}
+                        </p>
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl -z-10 opacity-50" />
+              <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/10 to-webelio-secondary/10 rounded-3xl blur-3xl -z-10 opacity-50" />
             </motion.div>
           </div>
         </section>

@@ -333,28 +333,32 @@ function CompanyCarousel() {
 
   const images = [
     {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/pic1-ULZVffzxxf4BRiMgZTNPU4eZQkBml4.jpg",
+      src: "/images/about-images/pic1.jpg",
       alt: "Webelio team celebrating together in the office",
     },
     {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.37_ef14eb36-vyrSMHQ1HiJeWff3K6tcmfseXxp8ZM.jpg",
+      src: "/images/about-images/WhatsApp Image 2025-10-18 at 08.27.37_ef14eb36.jpg",
       alt: "Festival celebrations at Webelio office",
     },
     {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.14_489802c0-pL08osjj8nahWgwMUwjt9VaEztm78c.jpg",
+      src: "/images/about-images/WhatsApp Image 2025-10-18 at 08.27.14_489802c0.jpg",
       alt: "Team members bonding during festival celebrations",
     },
     {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.54.21_e2e96a9e-l9d3AjeI6tvRG27QXBglDwDuzU0BrJ.jpg",
-      alt: "Celebrating achievements and milestones",
+      src: "/images/about-images/IMG_1242.JPG",
+      alt: "Webelio team and culture",
     },
     {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-11-03%20at%2021.18.01_3be246e5-OH5Re90ggF8lVCUYqJNEkvNezMn6uC.jpg",
-      alt: "Team appreciation and recognition moments",
+      src: "/images/about-images/PXL_20250620_124342042.jpg",
+      alt: "Team activities and collaboration",
     },
     {
-      src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202025-10-18%20at%2008.27.12_59be8112-CYe5z6k3W5I8Ah7PmOuWQaSYHe48KA.jpg",
-      alt: "Celebrating festivals with sky lanterns",
+      src: "/images/about-images/PXL_20250802_094210867.jpg",
+      alt: "Webelio workspace and team",
+    },
+    {
+      src: "/images/about-images/PXL_20250802_094524790.jpg",
+      alt: "Team moments and celebrations",
     },
   ]
 
