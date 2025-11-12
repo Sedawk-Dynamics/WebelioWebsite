@@ -39,7 +39,7 @@ export function NavBar() {
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-xl border-b border-gray-800/50 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-[128px] lg:backdrop-blur-xl border-b border-gray-800/50 ${
         scrolled ? "bg-black/85" : "bg-black/60"
       }`}
       initial={{ y: -100 }}
@@ -140,7 +140,7 @@ export function NavBar() {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              className={`lg:hidden absolute top-full left-0 right-0 backdrop-blur-xl border-b border-gray-800 ${
+              className={`lg:hidden absolute top-full left-0 right-0 backdrop-blur-[128px] border-b border-gray-800 ${
                 scrolled ? "bg-black/85" : "bg-black/60"
               }`}
               initial={{ opacity: 0, height: 0 }}

@@ -11,6 +11,43 @@ export interface ChatRequest {
   conversationHistory?: ChatMessage[]
 }
 
+// Word limit for responses (configurable via environment variable)
+const MAX_WORDS = parseInt(process.env.CHATBOT_MAX_WORDS || "250", 10)
+
+// Function to count words in text
+function countWords(text: string): number {
+  if (!text) return 0
+  return text.trim().split(/\s+/).filter(word => word.length > 0).length
+}
+
+// Function to truncate text to word limit
+function truncateToWordLimit(text: string, maxWords: number = MAX_WORDS): string {
+  if (!text) return text
+  
+  const words = text.trim().split(/\s+/).filter(word => word.length > 0)
+  
+  if (words.length <= maxWords) {
+    return text.trim()
+  }
+  
+  // Truncate to maxWords and add ellipsis if needed
+  const truncated = words.slice(0, maxWords).join(" ")
+  
+  // Try to end at a sentence boundary if possible
+  const lastPeriod = truncated.lastIndexOf(".")
+  const lastQuestion = truncated.lastIndexOf("?")
+  const lastExclamation = truncated.lastIndexOf("!")
+  const lastSentenceEnd = Math.max(lastPeriod, lastQuestion, lastExclamation)
+  
+  if (lastSentenceEnd > maxWords * 0.7) {
+    // If we can end at a sentence boundary and it's not too short, use that
+    return truncated.substring(0, lastSentenceEnd + 1).trim()
+  }
+  
+  // Otherwise, just truncate and add ellipsis
+  return truncated.trim() + "..."
+}
+
 // Function to strip markdown formatting from text
 function stripMarkdown(text: string): string {
   if (!text) return text
@@ -82,20 +119,32 @@ export async function POST(request: NextRequest) {
     const systemPrompt = `You are a helpful AI support assistant for Webelio (a brand of Sedawk Dynamics Pvt Ltd). 
 
 CRITICAL RULES:
-1. You MUST ONLY answer questions related to Webelio, its services, pricing, technologies, processes, team, portfolio, or company information
-2. You MUST NOT answer general questions unrelated to Webelio (e.g., weather, general knowledge, other companies, personal advice)
-3. If asked a question NOT related to Webelio, politely decline and redirect: "I'm a support assistant for Webelio and can only help with questions about our company, services, pricing, technologies, or processes. How can I assist you with Webelio?"
-4. NEVER use markdown formatting (no **, *, #, etc.) - only plain text responses
-5. Remove all markdown syntax from responses (no bold, italic, headers, lists with markdown symbols)
+1. You MUST answer questions related to:
+   - Webelio company information, services, pricing, technologies, processes, team, portfolio
+   - Technology questions that help users understand tech concepts, including comparisons (e.g., "what is difference between mobile app and web app"), explanations of technologies, how technologies work, and how they relate to Webelio's services
+   - Technical explanations and comparisons that help users understand different technologies, their differences, advantages, and how Webelio uses or implements them
+   - Educational tech questions that help users make informed decisions about their technology needs
+2. You MUST NOT answer general questions completely unrelated to Webelio or technology (e.g., weather, general knowledge unrelated to tech/company, other companies' services, personal advice unrelated to business/tech)
+3. For tech-related questions (including comparisons and "what is" questions), always:
+   - Provide clear, helpful explanations
+   - Connect them to Webelio's expertise, services, or how Webelio can help implement those technologies
+   - Explain how Webelio uses these technologies in their projects
+   - Offer to help users choose the right solution for their needs
+4. If asked a question NOT related to Webelio or technology, politely redirect: "I'm a support assistant for Webelio and can help with questions about our company, services, technologies we use, or tech concepts related to our expertise. How can I assist you?"
+5. NEVER use markdown formatting (no **, *, #, etc.) - only plain text responses
+6. Remove all markdown syntax from responses (no bold, italic, headers, lists with markdown symbols)
 
 Your role is to:
 1. Answer questions about Webelio's services, pricing, technologies, and processes
-2. Provide helpful information based on the company knowledge base
-3. Be friendly, professional, and conversational
-4. If you don't know something specific about Webelio, offer to connect the user with the team
-5. Encourage users to schedule a consultation for detailed discussions
-6. Keep responses concise but informative (2-4 sentences when possible, but be detailed when needed)
-7. ALWAYS use plain text - NO markdown formatting
+2. Explain technology concepts, comparisons, and differences in the context of Webelio's expertise and services
+3. Help users understand how specific technologies work, their differences, advantages, and how Webelio uses them
+4. Answer comparison questions (e.g., mobile app vs web app, React vs Vue, etc.) by explaining differences and connecting to Webelio's services
+5. Provide helpful information based on the company knowledge base
+6. Be friendly, professional, and conversational
+7. If you don't know something specific about Webelio, offer to connect the user with the team
+8. Encourage users to schedule a consultation for detailed discussions
+9. Keep responses concise and within ${MAX_WORDS} words maximum - be informative but brief
+10. ALWAYS use plain text - NO markdown formatting
 
 Company Knowledge Base:
 ${companyContext}
@@ -104,10 +153,13 @@ Guidelines:
 - Always refer to the company knowledge base for accurate information
 - Use Indian Rupees (₹) for pricing when mentioned
 - Be helpful and encouraging
+- CRITICAL: Keep all responses within ${MAX_WORDS} words maximum - be concise and to the point
+- When explaining tech concepts or comparisons, provide clear but concise explanations and relate them to Webelio's services
+- Answer comparison questions by explaining key differences briefly and how Webelio can help with each
+- If asked about a technology, explain it concisely in the context of how Webelio uses it
+- For complex topics, provide a brief overview and suggest scheduling a consultation for detailed discussion
 - If asked about something not in the knowledge base, suggest contacting the team directly
-- For complex questions, recommend scheduling a consultation
 - When users ask about contact information, provide: email (sales@webel.io), phone (+91 97735 96863), or consultation page (/consultation)
-- NEVER answer questions unrelated to Webelio - always redirect to Webelio-related topics
 - NEVER use markdown formatting in responses - only plain text`
 
     // Try Gemini API first (if available)
@@ -152,7 +204,7 @@ Guidelines:
               temperature: 0.7,
               topK: 40,
               topP: 0.95,
-              maxOutputTokens: 500,
+              maxOutputTokens: Math.max(200, MAX_WORDS * 3), // Roughly 3 tokens per word
             },
             safetySettings: [
               {
@@ -207,8 +259,11 @@ Guidelines:
 
         // Remove markdown formatting
         aiResponse = stripMarkdown(aiResponse)
+        
+        // Apply word limit
+        aiResponse = truncateToWordLimit(aiResponse, MAX_WORDS)
 
-        console.log("✅ Gemini API: Successfully generated response using", geminiModel)
+        console.log("✅ Gemini API: Successfully generated response using", geminiModel, `(${countWords(aiResponse)} words)`)
 
         return NextResponse.json({
           message: aiResponse,
@@ -246,7 +301,7 @@ Guidelines:
               content: msg.content,
             })),
             temperature: 0.7,
-            max_tokens: 500,
+            max_tokens: Math.max(200, MAX_WORDS * 3), // Roughly 3 tokens per word
           }),
         })
 
@@ -263,8 +318,11 @@ Guidelines:
 
         // Remove markdown formatting
         aiResponse = stripMarkdown(aiResponse)
+        
+        // Apply word limit
+        aiResponse = truncateToWordLimit(aiResponse, MAX_WORDS)
 
-        console.log("✅ OpenAI API: Successfully generated response using", data.model || "gpt-3.5-turbo")
+        console.log("✅ OpenAI API: Successfully generated response using", data.model || "gpt-3.5-turbo", `(${countWords(aiResponse)} words)`)
 
         return NextResponse.json({
           message: aiResponse,
@@ -283,7 +341,10 @@ Guidelines:
     // Remove markdown formatting from fallback response
     fallbackResponse = stripMarkdown(fallbackResponse)
     
-    console.log("⚠️ Fallback System: Using rule-based responses (no API configured)")
+    // Apply word limit
+    fallbackResponse = truncateToWordLimit(fallbackResponse, MAX_WORDS)
+    
+    console.log("⚠️ Fallback System: Using rule-based responses (no API configured)", `(${countWords(fallbackResponse)} words)`)
 
     return NextResponse.json({
       message: fallbackResponse,
@@ -306,7 +367,7 @@ Guidelines:
 function generateIntelligentResponse(message: string, companyContext: string): string {
   const lowerMessage = message.toLowerCase()
   
-  // Check if question is related to Webelio
+  // Check if question is related to Webelio or technology
   const webelioKeywords = [
     'webelio', 'sedawk', 'company', 'services', 'service', 'pricing', 'price', 'cost', 'budget',
     'technology', 'technologies', 'tech stack', 'framework', 'timeline', 'deadline', 'how long',
@@ -316,11 +377,24 @@ function generateIntelligentResponse(message: string, companyContext: string): s
     'ai', 'ml', 'cybersecurity', 'automation', 'embedded', 'graphic', 'social media'
   ]
   
-  const isWebelioRelated = webelioKeywords.some(keyword => lowerMessage.includes(keyword))
+  const techKeywords = [
+    'react', 'next.js', 'node.js', 'python', 'javascript', 'typescript', 'vue', 'angular',
+    'database', 'postgresql', 'mongodb', 'redis', 'aws', 'azure', 'gcp', 'cloud',
+    'api', 'rest', 'graphql', 'microservices', 'docker', 'kubernetes', 'devops',
+    'machine learning', 'artificial intelligence', 'tensorflow', 'pytorch', 'neural network',
+    'mobile development', 'ios', 'android', 'react native', 'flutter', 'swift', 'kotlin',
+    'frontend', 'backend', 'full stack', 'ui', 'ux', 'design system', 'responsive',
+    'security', 'encryption', 'authentication', 'authorization', 'ssl', 'https',
+    'performance', 'optimization', 'scalability', 'load balancing', 'caching',
+    'agile', 'scrum', 'ci/cd', 'testing', 'qa', 'deployment', 'hosting'
+  ]
   
-  // If question is not related to Webelio, redirect
-  if (!isWebelioRelated && !lowerMessage.includes('hello') && !lowerMessage.includes('hi') && !lowerMessage.includes('hey')) {
-    return "I'm a support assistant for Webelio and can only help with questions about our company, services, pricing, technologies, or processes. How can I assist you with Webelio?"
+  const isWebelioRelated = webelioKeywords.some(keyword => lowerMessage.includes(keyword))
+  const isTechRelated = techKeywords.some(keyword => lowerMessage.includes(keyword))
+  
+  // If question is not related to Webelio or technology, redirect
+  if (!isWebelioRelated && !isTechRelated && !lowerMessage.includes('hello') && !lowerMessage.includes('hi') && !lowerMessage.includes('hey')) {
+    return "I'm a support assistant for Webelio and can help with questions about our company, services, technologies we use, or tech concepts related to our expertise. How can I assist you?"
   }
 
   // Pricing questions
@@ -337,9 +411,49 @@ function generateIntelligentResponse(message: string, companyContext: string): s
     return "Our project costs are tailored to your specific requirements. We offer transparent pricing with detailed breakdowns. Basic projects typically range from ₹50,000-₹1,50,000, medium complexity projects from ₹1,50,000-₹3,50,000, and enterprise solutions from ₹3,50,000+. We also offer a free 30-minute consultation to discuss your project and provide a personalized quote. Would you like to schedule one?"
   }
 
-  // Technology questions
+  // Technology questions - general tech stack
   if (lowerMessage.includes("technology") || lowerMessage.includes("tech stack") || lowerMessage.includes("framework") || lowerMessage.includes("technologies")) {
     return "We specialize in modern technologies: Frontend (React, Next.js, Vue.js, TypeScript), Backend (Node.js, Python, Java, .NET), Databases (PostgreSQL, MongoDB, Redis), Cloud (AWS, Azure, GCP, Vercel), Mobile (React Native, Flutter, Swift, Kotlin), and AI/ML (TensorFlow, PyTorch, OpenAI, Scikit-learn). Our team stays current with industry best practices and emerging technologies. What specific technology challenges are you facing?"
+  }
+
+  // Specific technology questions - React
+  if (lowerMessage.includes("react") && !lowerMessage.includes("native")) {
+    return "React is a powerful JavaScript library for building user interfaces. At Webelio, we use React extensively for creating dynamic, interactive web applications. React allows us to build reusable components, manage state efficiently, and create fast, responsive user experiences. We often combine React with Next.js for server-side rendering and optimal performance. Would you like to know how React can benefit your project?"
+  }
+
+  // Next.js questions
+  if (lowerMessage.includes("next.js") || lowerMessage.includes("nextjs")) {
+    return "Next.js is a React framework that we use at Webelio for building production-ready web applications. It provides server-side rendering, automatic code splitting, optimized performance, and seamless deployment. Next.js helps us deliver websites that load 340% faster and improve conversion rates by 127%. We use it for most of our web development projects because of its excellent SEO capabilities and developer experience. Are you considering Next.js for your project?"
+  }
+
+  // Node.js questions
+  if (lowerMessage.includes("node.js") || lowerMessage.includes("nodejs")) {
+    return "Node.js is a JavaScript runtime that we use at Webelio for building scalable backend services and APIs. It allows us to use JavaScript on both frontend and backend, making development more efficient. We use Node.js for real-time applications, REST APIs, microservices, and serverless functions. It's particularly great for handling concurrent connections and building fast, data-intensive applications. How can we help you leverage Node.js?"
+  }
+
+  // Python questions
+  if (lowerMessage.includes("python")) {
+    return "Python is a versatile programming language that Webelio uses for backend development, data science, AI/ML solutions, and automation. We leverage Python with frameworks like Django and Flask for web applications, and libraries like TensorFlow and PyTorch for machine learning projects. Python's simplicity and powerful libraries make it ideal for rapid development and complex data processing. Are you looking to build something with Python?"
+  }
+
+  // AI/ML questions
+  if (lowerMessage.includes("ai") || lowerMessage.includes("artificial intelligence") || lowerMessage.includes("machine learning") || lowerMessage.includes("ml")) {
+    return "At Webelio, we specialize in AI and machine learning solutions. We use technologies like TensorFlow, PyTorch, OpenAI APIs, and Scikit-learn to build intelligent systems. Our AI/ML services include predictive analytics, natural language processing, computer vision, and process automation. We've helped businesses achieve 94% accuracy rates, 75% process efficiency improvements, and 60% cost reductions through AI implementation. What AI solution are you interested in?"
+  }
+
+  // Mobile development questions
+  if (lowerMessage.includes("mobile") || lowerMessage.includes("app development") || lowerMessage.includes("react native") || lowerMessage.includes("flutter")) {
+    return "Webelio offers comprehensive mobile app development using React Native for cross-platform apps, or native development with Swift (iOS) and Kotlin (Android). React Native allows us to build apps for both iOS and Android with a single codebase, reducing development time and cost. Flutter is another excellent option for cross-platform development. Our mobile apps feature real-time synchronization, advanced security, and built-in analytics. Would you like to discuss your mobile app idea?"
+  }
+
+  // Database questions
+  if (lowerMessage.includes("database") || lowerMessage.includes("postgresql") || lowerMessage.includes("mongodb") || lowerMessage.includes("sql")) {
+    return "At Webelio, we work with various databases depending on project needs. PostgreSQL for relational data with ACID compliance, MongoDB for flexible document storage, and Redis for caching and real-time data. We help choose the right database based on your data structure, scalability needs, and performance requirements. Each database has its strengths, and we can help you make the best choice for your project. What type of data are you working with?"
+  }
+
+  // Cloud questions
+  if (lowerMessage.includes("cloud") || lowerMessage.includes("aws") || lowerMessage.includes("azure") || lowerMessage.includes("gcp") || lowerMessage.includes("vercel")) {
+    return "Webelio works with major cloud platforms including AWS, Azure, GCP, and Vercel. We help businesses migrate to the cloud, set up scalable infrastructure, implement CI/CD pipelines, and optimize cloud costs. Our cloud solutions ensure 99.9% uptime, automatic scaling, and enterprise-grade security. We can help you choose the right cloud platform based on your specific needs and budget. Are you looking to move to the cloud or optimize your existing setup?"
   }
 
   // Timeline questions
@@ -370,6 +484,51 @@ function generateIntelligentResponse(message: string, companyContext: string): s
   // Contact questions
   if (lowerMessage.includes("contact") || lowerMessage.includes("email") || lowerMessage.includes("phone") || lowerMessage.includes("reach")) {
     return "You can reach us via email at sales@webel.io, phone at +91 97735 96863 (Mon-Fri 9am-6pm IST), or schedule a consultation through our website at /consultation. We typically respond within 24 hours. Our office is located at 5th Floor, Tech Garden, Plot No 4, Sector 35, Udyog Vihar-VII, Gurugram, Haryana, 122004, India. We also offer virtual consultations. How would you like to connect?"
+  }
+
+  // Comparison questions - Mobile App vs Web App
+  if ((lowerMessage.includes("difference") || lowerMessage.includes("vs") || lowerMessage.includes("versus") || lowerMessage.includes("compare")) && 
+      ((lowerMessage.includes("mobile") && lowerMessage.includes("app")) && (lowerMessage.includes("web") || lowerMessage.includes("website")))) {
+    return "Great question! Here are the key differences between mobile apps and web apps: Mobile apps are native applications installed on devices (iOS/Android), offering better performance, offline access, and device features like camera and GPS. Web apps run in browsers, are easier to maintain, work across platforms, and don't require app store approval. At Webelio, we develop both. Mobile apps start at ₹2,00,000 and are ideal for frequent users needing offline access. Web apps start at ₹1,50,000 and are perfect for broader reach and easier updates. Many clients choose Progressive Web Apps (PWAs) which combine benefits of both. Which approach fits your needs better?"
+  }
+
+  // Comparison questions - React vs Vue vs Angular
+  if ((lowerMessage.includes("difference") || lowerMessage.includes("vs") || lowerMessage.includes("versus") || lowerMessage.includes("compare")) && 
+      (lowerMessage.includes("react") && (lowerMessage.includes("vue") || lowerMessage.includes("angular")))) {
+    return "React, Vue, and Angular are all excellent frontend frameworks. React (our primary choice at Webelio) offers flexibility, large ecosystem, and is great for complex UIs. Vue is easier to learn and has great documentation. Angular provides a complete framework with built-in features but has a steeper learning curve. At Webelio, we primarily use React with Next.js because it offers the best balance of performance, developer experience, and SEO capabilities. We've built 500+ projects using React, achieving 340% faster load times. The choice depends on your project needs, team expertise, and scalability requirements. Would you like to discuss which framework is best for your project?"
+  }
+
+  // Comparison questions - Native vs Cross-platform mobile
+  if ((lowerMessage.includes("difference") || lowerMessage.includes("vs") || lowerMessage.includes("versus") || lowerMessage.includes("compare")) && 
+      ((lowerMessage.includes("native") || lowerMessage.includes("swift") || lowerMessage.includes("kotlin")) && 
+       (lowerMessage.includes("cross-platform") || lowerMessage.includes("react native") || lowerMessage.includes("flutter")))) {
+    return "Native apps (Swift for iOS, Kotlin for Android) offer the best performance and full access to device features, but require separate development for each platform. Cross-platform apps (React Native, Flutter) use one codebase for both platforms, reducing development time and cost by up to 40%. At Webelio, we use React Native for most projects because it delivers near-native performance while saving time and money. Native development is ideal when you need maximum performance or platform-specific features. Cross-platform is perfect for most businesses wanting faster delivery and lower costs. We can help you choose based on your requirements. What's your priority - performance or cost efficiency?"
+  }
+
+  // Comparison questions - SQL vs NoSQL databases
+  if ((lowerMessage.includes("difference") || lowerMessage.includes("vs") || lowerMessage.includes("versus") || lowerMessage.includes("compare")) && 
+      ((lowerMessage.includes("sql") || lowerMessage.includes("postgresql") || lowerMessage.includes("mysql")) && 
+       (lowerMessage.includes("nosql") || lowerMessage.includes("mongodb")))) {
+    return "SQL databases (PostgreSQL, MySQL) store data in structured tables with relationships, ensuring data integrity and ACID compliance. They're ideal for complex queries and transactions. NoSQL databases (MongoDB) store flexible document data, scale horizontally easily, and are great for rapid development. At Webelio, we use PostgreSQL for relational data requiring consistency, and MongoDB for flexible schemas and rapid iteration. The choice depends on your data structure: structured relational data needs SQL, while flexible or rapidly changing data benefits from NoSQL. Many projects use both. What type of data are you working with?"
+  }
+
+  // Comparison questions - AWS vs Azure vs GCP
+  if ((lowerMessage.includes("difference") || lowerMessage.includes("vs") || lowerMessage.includes("versus") || lowerMessage.includes("compare")) && 
+      (lowerMessage.includes("aws") && (lowerMessage.includes("azure") || lowerMessage.includes("gcp") || lowerMessage.includes("google cloud")))) {
+    return "AWS, Azure, and GCP are the three major cloud platforms. AWS has the largest market share and most services. Azure integrates well with Microsoft products. GCP excels in data analytics and machine learning. At Webelio, we work with all three and help clients choose based on their needs. AWS for broad service selection, Azure for Microsoft ecosystem integration, GCP for data-heavy workloads. We also use Vercel for Next.js deployments due to its seamless integration. The best choice depends on your existing infrastructure, budget, and specific requirements. Which cloud platform are you considering?"
+  }
+
+  // General comparison questions handler
+  if (lowerMessage.includes("difference") || lowerMessage.includes("vs") || lowerMessage.includes("versus") || lowerMessage.includes("compare")) {
+    return "I'd be happy to explain the differences! At Webelio, we work with various technologies and can help you understand their pros and cons. Could you clarify what specific technologies or solutions you'd like to compare? For example, mobile app vs web app, React vs Vue, native vs cross-platform, or any other tech comparison. Once I know what you're comparing, I can provide detailed insights and explain how Webelio uses each technology in our projects."
+  }
+
+  // "What is" questions handler
+  if (lowerMessage.includes("what is") || lowerMessage.includes("what are") || lowerMessage.includes("explain")) {
+    // Check if it's a tech-related "what is" question
+    if (isTechRelated || isWebelioRelated) {
+      return "I'd be happy to explain! At Webelio, we work with many technologies and can help you understand how they work and how we use them in our projects. Could you be more specific about what technology or concept you'd like me to explain? For example, what is React, what is Next.js, what is a mobile app, what is cloud computing, etc. I'll provide a clear explanation and connect it to how Webelio implements these technologies."
+    }
   }
 
   // Greeting
