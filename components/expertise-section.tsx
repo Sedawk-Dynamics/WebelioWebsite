@@ -4,6 +4,7 @@ import type React from "react"
 
 import type { ReactElement } from "react"
 import { DashboardChart } from "@/components/dashboard-chart"
+import Link from "next/link"
 
 import { useRef, useEffect, useState } from "react"
 import { motion, useInView } from "framer-motion"
@@ -273,10 +274,10 @@ export function ExpertiseSection(): ReactElement {
                   </div>
 
                   <div className="pt-4">
-                    <button className="text-webelio-secondary flex items-center text-sm group-hover:underline">
+                    <Link href="/process" className="text-webelio-secondary flex items-center text-sm group-hover:underline">
                       <ChevronRight className="w-4 h-4 mr-1" />
                       Learn about our process
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
