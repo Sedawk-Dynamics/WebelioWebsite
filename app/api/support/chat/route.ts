@@ -395,4 +395,3 @@ export async function GET() {
         : "Fallback",
   })
 }
-
