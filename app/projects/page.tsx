@@ -825,7 +825,7 @@ export default function ProjectsPage() {
                       <DollarSign className="w-4 h-4 text-green-500" />
                     </div>
                     <div>
-                      <p className="text-lg font-bold text-white">$12M+</p>
+                      <p className="text-lg font-bold text-white">₹100 Cr+</p>
                       <p className="text-xs text-gray-400">Revenue</p>
                     </div>
                   </div>

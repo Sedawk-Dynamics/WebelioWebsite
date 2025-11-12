@@ -117,7 +117,7 @@ export function Footer() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail className="w-4 h-4" />
-                  <span>info@sedawk.in</span>
+                  <span>sales@webel.io</span>
                 </div>
               </div>
             </div>
@@ -205,7 +205,7 @@ export function Footer() {
             </div>
             <div className="flex items-center justify-center space-x-2">
               <Mail className="w-4 h-4" />
-              <span>info@sedawk.in</span>
+              <span>sales@webel.io</span>
             </div>
           </div>
 

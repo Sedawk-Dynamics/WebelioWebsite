@@ -182,7 +182,7 @@ export default function SupportPage() {
       console.error("Error sending message:", error)
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or contact us directly at info@sedawk.in or call +91 97735 96863.",
+        text: "I apologize, but I'm experiencing technical difficulties. Please try again in a moment, or contact us directly at sales@webel.io or call +91 97735 96863.",
         sender: "bot",
         timestamp: new Date(),
       }
