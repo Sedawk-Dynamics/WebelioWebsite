@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useMemo, useRef, memo } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Footer } from "@/components/footer"
 import {
@@ -22,11 +22,130 @@ import {
   ThumbsDown,
   FileText,
   FileImage,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  ChevronDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { getProjects, getCategories, type Project, type Category } from "@/lib/api"
 
 // API_BASE_URL is no longer needed for file URLs since backend returns full URLs
+
+// Optimized Pagination Controls Component - memoized to prevent unnecessary re-renders
+const PaginationControls = memo(({ 
+  currentPage, 
+  totalPages, 
+  onPageChange 
+}: { 
+  currentPage: number
+  totalPages: number
+  onPageChange: (page: number) => void 
+}) => {
+  // Generate smart page numbers - show max 7 pages with ellipsis
+  const getPageNumbers = useMemo(() => {
+    const pages: (number | string)[] = []
+    const maxVisible = 7
+    
+    if (totalPages <= maxVisible) {
+      // Show all pages if total is less than max
+      return Array.from({ length: totalPages }, (_, i) => i + 1)
+    }
+    
+    // Always show first page
+    pages.push(1)
+    
+    // Calculate start and end of visible range
+    let start = Math.max(2, currentPage - 1)
+    let end = Math.min(totalPages - 1, currentPage + 1)
+    
+    // Adjust range to show more pages if we're near the edges
+    if (currentPage <= 3) {
+      end = Math.min(5, totalPages - 1)
+    } else if (currentPage >= totalPages - 2) {
+      start = Math.max(2, totalPages - 4)
+    }
+    
+    // Add ellipsis after first page if needed
+    if (start > 2) {
+      pages.push('...')
+    }
+    
+    // Add visible page range
+    for (let i = start; i <= end; i++) {
+      pages.push(i)
+    }
+    
+    // Add ellipsis before last page if needed
+    if (end < totalPages - 1) {
+      pages.push('...')
+    }
+    
+    // Always show last page
+    if (totalPages > 1) {
+      pages.push(totalPages)
+    }
+    
+    return pages
+  }, [currentPage, totalPages])
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        variant="outline"
+        size="sm"
+        className="border-gray-600 text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </Button>
+      <div className="flex items-center gap-1">
+        {getPageNumbers.map((page, index) => {
+          if (page === '...') {
+            return (
+              <span key={`ellipsis-${index}`} className="px-2 text-gray-500">
+                ...
+              </span>
+            )
+          }
+          return (
+            <Button
+              key={page}
+              onClick={() => onPageChange(page as number)}
+              variant={currentPage === page ? "default" : "outline"}
+              size="sm"
+              className={`${
+                currentPage === page
+                  ? "bg-[#ffcc66]/20 text-[#ffcc66] border-[#ffcc66]/30"
+                  : "border-gray-600 text-gray-400"
+              } min-w-[2.5rem]`}
+            >
+              {page}
+            </Button>
+          )
+        })}
+      </div>
+      <Button
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        variant="outline"
+        size="sm"
+        className="border-gray-600 text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </Button>
+    </div>
+  )
+})
+
+PaginationControls.displayName = 'PaginationControls'
 
 export default function ProjectsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -40,6 +159,8 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true)
   const [filtering, setFiltering] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const projectsPerPage = 15
 
   const AssetPreview = ({ url, label }: { url: string; label: string }) => {
     const extension = url.split('.').pop()?.toLowerCase() || ''
@@ -265,18 +386,38 @@ export default function ProjectsPage() {
   // Use categoryFilters instead of old filters
   const filters = categoryFilters
 
-  // Use API projects, mapped to UI format
-  const projects = apiProjects.map(mapApiProjectToUI)
+  // Use API projects, mapped to UI format - memoized to avoid recalculation
+  const projects = useMemo(() => apiProjects.map(mapApiProjectToUI), [apiProjects])
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter projects by search term - memoized
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      const matchesSearch =
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchTerm.toLowerCase())
 
-    // Category filtering is handled by API, so we just filter by search
-    return matchesSearch
-  })
+      // Category filtering is handled by API, so we just filter by search
+      return matchesSearch
+    })
+  }, [projects, searchTerm])
+
+  // Pagination calculations - memoized
+  const paginationData = useMemo(() => {
+    const totalPages = Math.ceil(filteredProjects.length / projectsPerPage)
+    const startIndex = (currentPage - 1) * projectsPerPage
+    const endIndex = startIndex + projectsPerPage
+    const paginatedProjects = filteredProjects.slice(startIndex, endIndex)
+    
+    return { totalPages, startIndex, endIndex, paginatedProjects }
+  }, [filteredProjects, currentPage, projectsPerPage])
+
+  const { totalPages, startIndex, endIndex, paginatedProjects } = paginationData
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [selectedCategory, searchTerm])
 
   // Track previous category to detect category changes
   const prevCategoryRef = useRef<string | null>(null)
@@ -284,21 +425,21 @@ export default function ProjectsPage() {
 
   // Set first project as default selected (only if no project is selected or selected project is not in filtered list)
   useEffect(() => {
-    if (filteredProjects.length > 0 && !filtering) {
-      const currentProjectIds = filteredProjects.map(p => p.id)
+    if (paginatedProjects.length > 0 && !filtering) {
+      const currentProjectIds = paginatedProjects.map(p => p.id)
       const categoryChanged = prevCategoryRef.current !== selectedCategory
       const projectListChanged = JSON.stringify(prevFilteredProjectIdsRef.current) !== JSON.stringify(currentProjectIds)
       
-      // Check if currently selected project is still in the filtered list
-      const currentProjectInList = selectedProject && filteredProjects.find(p => p.id === selectedProject.id)
+      // Check if currently selected project is still in the paginated list
+      const currentProjectInList = selectedProject && paginatedProjects.find(p => p.id === selectedProject.id)
       
       if (!selectedProject) {
         // No project selected, select the first one
-        setSelectedProject(filteredProjects[0])
+        setSelectedProject(paginatedProjects[0])
       } else if (!currentProjectInList && (categoryChanged || projectListChanged)) {
-        // Selected project is no longer in the filtered list, select the first available
+        // Selected project is no longer in the paginated list, select the first available
         // Only update if category changed or project list actually changed
-        setSelectedProject(filteredProjects[0])
+        setSelectedProject(paginatedProjects[0])
       }
       // If current project is still in list, keep it - don't update to prevent iframe reload
       
@@ -306,7 +447,7 @@ export default function ProjectsPage() {
       prevCategoryRef.current = selectedCategory
       prevFilteredProjectIdsRef.current = currentProjectIds
     }
-  }, [filteredProjects, filtering, selectedCategory, selectedProject])
+  }, [paginatedProjects, filtering, selectedCategory, selectedProject])
 
   // Show loading state
   if (loading) {
@@ -395,44 +536,77 @@ export default function ProjectsPage() {
           <div className="p-4">
             {/* Header */}
             <div className="mb-6">
-              <h1 className="text-3xl font-bold mb-3 text-white">Projects</h1>
+              <div className="flex items-center justify-between mb-3">
+                <h1 className="text-3xl font-bold text-white">Projects</h1>
+                <span className="text-sm font-semibold text-[#ffcc66] bg-[#ffcc66]/10 px-3 py-1 rounded-full border border-[#ffcc66]/30">
+                  {filteredProjects.length} {filteredProjects.length === 1 ? 'Project' : 'Projects'}
+                </span>
+              </div>
               <p className="text-sm text-gray-400">
                 Explore our comprehensive portfolio of successful client projects.
               </p>
             </div>
 
-            {/* Search */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <input
-                type="text"
-                placeholder="Search projects..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 text-sm"
-              />
-            </div>
-
-            {/* Category Filters */}
-            <div className="flex flex-wrap gap-2 mb-6">
-              {filters.map((filter) => (
-                <button
-                  key={filter.id || 'all'}
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedCategory(filter.id);
-                  }}
-                  className={`px-3 py-1 text-xs rounded transition-all ${
-                    selectedCategory === filter.id
-                      ? "bg-secondary/20 text-secondary border border-primary/50"
-                      : "bg-gray-950 text-gray-400 border border-gray-800 hover:text-white hover:border-primary/30"
-                  }`}
-                >
-                  {filter.label} ({filter.count})
-                </button>
-              ))}
+            {/* Search and Filters */}
+            <div className="mb-4">
+              <div className="flex gap-2">
+                {/* Search */}
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search projects..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 text-sm"
+                  />
+                </div>
+                
+                {/* Category Filter Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="justify-between bg-gray-950 border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white whitespace-nowrap"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Filter className="w-4 h-4" />
+                        <span className="hidden sm:inline">
+                          {selectedCategory 
+                            ? (() => {
+                                const selectedFilter = filters.find(f => f.id === selectedCategory);
+                                return selectedFilter ? `${selectedFilter.label} (${selectedFilter.count})` : "Category";
+                              })()
+                            : "Category"}
+                        </span>
+                        <span className="sm:hidden">
+                          {selectedCategory 
+                            ? (() => {
+                                const selectedFilter = filters.find(f => f.id === selectedCategory);
+                                return selectedFilter ? `${selectedFilter.count}` : "Category";
+                              })()
+                            : "Category"}
+                        </span>
+                      </div>
+                      <ChevronDown className="w-4 h-4 opacity-50 ml-2" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 bg-gray-950 border-gray-800 text-white max-h-[300px] overflow-y-auto">
+                    {filters.map((filter) => (
+                      <DropdownMenuItem
+                        key={filter.id || 'all'}
+                        onClick={() => setSelectedCategory(filter.id)}
+                        className={`cursor-pointer focus:bg-gray-800 ${
+                          selectedCategory === filter.id ? "bg-gray-800" : ""
+                        }`}
+                      >
+                        <span className="flex-1">{filter.label}</span>
+                        <span className="text-xs text-[#ffcc66] font-semibold ml-2">({filter.count})</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
 
             {/* Mobile Project List - Scrollable */}
@@ -442,7 +616,7 @@ export default function ProjectsPage() {
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ffcc66]"></div>
                 </div>
               )}
-              {filteredProjects.map((project, index) => (
+              {paginatedProjects.map((project, index) => (
                 <div key={project.id} className="bg-black border border-white/20 rounded-lg overflow-hidden">
                   {/* Project Header */}
                   <div className="p-4">
@@ -608,6 +782,20 @@ export default function ProjectsPage() {
                 </div>
               ))}
             </div>
+
+            {/* Pagination Controls - Mobile */}
+            {totalPages > 1 && (
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+            {totalPages > 0 && (
+              <div className="text-center text-sm text-gray-400 pb-4">
+                Showing {startIndex + 1}-{Math.min(endIndex, filteredProjects.length)} of {filteredProjects.length} projects
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -618,7 +806,12 @@ export default function ProjectsPage() {
             <div className="p-4">
               {/* Header */}
               <div className="mb-6">
-                <h1 className="text-2xl font-bold mb-3 text-white">Projects</h1>
+                <div className="flex items-center justify-between mb-3">
+                  <h1 className="text-2xl font-bold text-white">Projects</h1>
+                  <span className="text-xs font-semibold text-[#ffcc66] bg-[#ffcc66]/10 px-2 py-1 rounded-full border border-[#ffcc66]/30">
+                    {filteredProjects.length} {filteredProjects.length === 1 ? 'Project' : 'Projects'}
+                  </span>
+                </div>
                 <p className="text-sm text-gray-400">
                   Explore our comprehensive portfolio of successful client projects.
                 </p>
@@ -639,38 +832,58 @@ export default function ProjectsPage() {
                 </div>
               </div>
 
-              {/* Search */}
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search projects..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 text-sm"
-                />
-              </div>
-
-              {/* Category Filters */}
-              <div className="flex flex-wrap gap-1 mb-4">
-                {filters.map((filter) => (
-                  <button
-                    key={filter.id || 'all'}
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setSelectedCategory(filter.id);
-                    }}
-                    className={`px-2 py-1 text-xs rounded transition-all ${
-                      selectedCategory === filter.id
-                        ? "bg-secondary/20 text-secondary border border-primary/50"
-                        : "bg-gray-950 text-gray-400 border border-gray-800 hover:text-white hover:border-primary/30"
-                    }`}
-                  >
-                    {filter.label} ({filter.count})
-                  </button>
-                ))}
+              {/* Search and Filters */}
+              <div className="mb-4">
+                <div className="flex gap-2">
+                  {/* Search */}
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-gray-950 border border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-white placeholder-gray-400 text-sm"
+                    />
+                  </div>
+                  
+                  {/* Category Filter Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="justify-between bg-gray-950 border-gray-800 text-gray-300 hover:bg-gray-900 hover:text-white whitespace-nowrap"
+                      >
+                        <div className="flex items-center gap-2">
+                          <Filter className="w-4 h-4" />
+                          <span>
+                            {selectedCategory 
+                              ? (() => {
+                                  const selectedFilter = filters.find(f => f.id === selectedCategory);
+                                  return selectedFilter ? `${selectedFilter.label} (${selectedFilter.count})` : "Category";
+                                })()
+                              : "Category"}
+                          </span>
+                        </div>
+                        <ChevronDown className="w-4 h-4 opacity-50 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 bg-gray-950 border-gray-800 text-white max-h-[300px] overflow-y-auto">
+                      {filters.map((filter) => (
+                        <DropdownMenuItem
+                          key={filter.id || 'all'}
+                          onClick={() => setSelectedCategory(filter.id)}
+                          className={`cursor-pointer focus:bg-gray-800 ${
+                            selectedCategory === filter.id ? "bg-gray-800" : ""
+                          }`}
+                        >
+                          <span className="flex-1">{filter.label}</span>
+                          <span className="text-xs text-[#ffcc66] font-semibold ml-2">({filter.count})</span>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
 
               {/* Projects List */}
@@ -680,7 +893,7 @@ export default function ProjectsPage() {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ffcc66]"></div>
                   </div>
                 )}
-                {filteredProjects.map((project) => (
+                {paginatedProjects.map((project) => (
                   <div
                     key={project.id}
                     onClick={() => setSelectedProject(project)}
@@ -729,6 +942,22 @@ export default function ProjectsPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination Controls - Desktop */}
+              {totalPages > 1 && (
+                <div className="p-4 border-t border-gray-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-xs text-gray-400">
+                      Showing {startIndex + 1}-{Math.min(endIndex, filteredProjects.length)} of {filteredProjects.length} projects
+                    </div>
+                    <PaginationControls
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
