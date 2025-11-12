@@ -208,12 +208,15 @@ Guidelines:
         // Remove markdown formatting
         aiResponse = stripMarkdown(aiResponse)
 
+        console.log("✅ Gemini API: Successfully generated response using", geminiModel)
+
         return NextResponse.json({
           message: aiResponse,
           model: geminiModel,
+          provider: "gemini",
         })
       } catch (error) {
-        console.error("Gemini API failed, trying OpenAI:", error)
+        console.error("❌ Gemini API failed, trying OpenAI:", error)
         // Fall through to OpenAI or fallback
       }
     }
@@ -261,12 +264,15 @@ Guidelines:
         // Remove markdown formatting
         aiResponse = stripMarkdown(aiResponse)
 
+        console.log("✅ OpenAI API: Successfully generated response using", data.model || "gpt-3.5-turbo")
+
         return NextResponse.json({
           message: aiResponse,
           model: data.model || "gpt-3.5-turbo",
+          provider: "openai",
         })
       } catch (error) {
-        console.error("OpenAI API failed, using fallback:", error)
+        console.error("❌ OpenAI API failed, using fallback:", error)
         // Fall through to fallback response
       }
     }
@@ -277,9 +283,12 @@ Guidelines:
     // Remove markdown formatting from fallback response
     fallbackResponse = stripMarkdown(fallbackResponse)
     
+    console.log("⚠️ Fallback System: Using rule-based responses (no API configured)")
+
     return NextResponse.json({
       message: fallbackResponse,
-      model: "fallback"
+      model: "fallback",
+      provider: "fallback",
     })
 
   } catch (error) {

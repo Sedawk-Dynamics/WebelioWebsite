@@ -25,6 +25,7 @@ export default function SupportPage() {
   ])
   const [inputMessage, setInputMessage] = useState("")
   const [isTyping, setIsTyping] = useState(false)
+  const [activeModel, setActiveModel] = useState<string | null>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -92,6 +93,36 @@ export default function SupportPage() {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
+  // Check API status on component mount
+  useEffect(() => {
+    const checkApiStatus = async () => {
+      try {
+        const response = await fetch("/api/support/chat", {
+          method: "GET",
+        })
+        if (response.ok) {
+          const data = await response.json()
+          console.log("📊 Support Chat API Status:", data)
+          if (data.activeProvider) {
+            const model = data.activeProvider === "Gemini" ? "gemini-pro" : data.activeProvider === "OpenAI" ? "gpt-3.5-turbo" : "fallback"
+            setActiveModel(model)
+            console.log("✅ Active Provider:", data.activeProvider, "- Model:", model)
+            if (data.hasGemini) {
+              console.log("✅ Gemini API: Configured and ready")
+            } else if (data.hasOpenAI) {
+              console.log("⚠️ Gemini API: Not configured, using OpenAI")
+            } else {
+              console.log("⚠️ No API configured, using fallback system")
+            }
+          }
+        }
+      } catch (error) {
+        console.error("❌ Error checking API status:", error)
+      }
+    }
+    checkApiStatus()
+  }, [])
+
   const sendMessage = async () => {
     if (!inputMessage.trim()) return
 
@@ -141,6 +172,12 @@ export default function SupportPage() {
         timestamp: new Date(),
       }
       setMessages((prev) => [...prev, botMessage])
+      
+      // Update active model from API response
+      if (data.model) {
+        setActiveModel(data.model)
+        console.log("✅ Active AI Provider:", data.provider || data.model, "- Model:", data.model)
+      }
     } catch (error) {
       console.error("Error sending message:", error)
       const errorMessage: Message = {
@@ -194,18 +231,44 @@ export default function SupportPage() {
           >
             {/* Chat Header */}
             <div className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border-b border-gray-700 p-6">
-              <div className="flex items-center space-x-4">
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-emerald-500/30 ring-offset-2 ring-offset-gray-800">
-                    <Bot className="w-7 h-7 text-white" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-emerald-500/30 ring-offset-2 ring-offset-gray-800">
+                      <Bot className="w-7 h-7 text-white" />
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-400 rounded-full border-2 border-gray-800 animate-pulse" />
                   </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-400 rounded-full border-2 border-gray-800 animate-pulse" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-white">Support Assistant</h3>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                    <span className="text-sm text-emerald-400">Online</span>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">Support Assistant</h3>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                      <span className="text-sm text-emerald-400">Online</span>
+                      {activeModel && (
+                        <span 
+                          className="text-xs px-2 py-0.5 rounded-full font-medium"
+                          style={{
+                            backgroundColor: activeModel === "gemini-pro" || activeModel === "gemini-pro-vision" || activeModel === "gemini-ultra"
+                              ? "rgba(34, 197, 94, 0.2)"
+                              : activeModel === "gpt-3.5-turbo" || activeModel === "gpt-4"
+                                ? "rgba(59, 130, 246, 0.2)"
+                                : "rgba(107, 114, 128, 0.2)",
+                            color: activeModel === "gemini-pro" || activeModel === "gemini-pro-vision" || activeModel === "gemini-ultra"
+                              ? "#34d399"
+                              : activeModel === "gpt-3.5-turbo" || activeModel === "gpt-4"
+                                ? "#60a5fa"
+                                : "#9ca3af"
+                          }}
+                          title={`Using ${activeModel === "gemini-pro" || activeModel === "gemini-pro-vision" || activeModel === "gemini-ultra" ? "Gemini API" : activeModel === "gpt-3.5-turbo" || activeModel === "gpt-4" ? "OpenAI API" : "Fallback System"}`}
+                        >
+                          {activeModel === "gemini-pro" || activeModel === "gemini-pro-vision" || activeModel === "gemini-ultra"
+                            ? "🤖 Gemini"
+                            : activeModel === "gpt-3.5-turbo" || activeModel === "gpt-4"
+                              ? "🤖 OpenAI"
+                              : "💬 Fallback"}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
