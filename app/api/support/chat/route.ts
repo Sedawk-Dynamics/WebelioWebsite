@@ -159,7 +159,7 @@ Guidelines:
 - If asked about a technology, explain it concisely in the context of how Webelio uses it
 - For complex topics, provide a brief overview and suggest scheduling a consultation for detailed discussion
 - If asked about something not in the knowledge base, suggest contacting the team directly
-- When users ask about contact information, provide: email (info@sedawk.in), phone (+91 97735 96863), or consultation page (/consultation)
+- When users ask about contact information, provide: email (sales@webel.io), phone (+91 97735 96863), or consultation page (/consultation)
 - NEVER use markdown formatting in responses - only plain text`
 
     // Try Gemini API first (if available)
@@ -483,7 +483,7 @@ function generateIntelligentResponse(message: string, companyContext: string): s
 
   // Contact questions
   if (lowerMessage.includes("contact") || lowerMessage.includes("email") || lowerMessage.includes("phone") || lowerMessage.includes("reach")) {
-    return "You can reach us via email at info@sedawk.in, phone at +91 97735 96863 (Mon-Fri 9am-6pm IST), or schedule a consultation through our website at /consultation. We typically respond within 24 hours. Our office is located at 5th Floor, Tech Garden, Plot No 4, Sector 35, Udyog Vihar-VII, Gurugram, Haryana, 122004, India. We also offer virtual consultations. How would you like to connect?"
+    return "You can reach us via email at sales@webel.io, phone at +91 97735 96863 (Mon-Fri 9am-6pm IST), or schedule a consultation through our website at /consultation. We typically respond within 24 hours. Our office is located at 5th Floor, Tech Garden, Plot No 4, Sector 35, Udyog Vihar-VII, Gurugram, Haryana, 122004, India. We also offer virtual consultations. How would you like to connect?"
   }
 
   // Comparison questions - Mobile App vs Web App
@@ -537,7 +537,7 @@ function generateIntelligentResponse(message: string, companyContext: string): s
   }
 
   // Default response - only for Webelio-related questions
-  return "That's an excellent question about Webelio! I'd love to provide you with detailed, personalized information. Our team of experts can address your specific needs and provide comprehensive solutions. You can reach our technical team directly at info@sedawk.in, schedule a free consultation at /consultation, or continue chatting with me for immediate assistance. What specific aspect of Webelio's services or processes would you like to explore further?"
+  return "That's an excellent question about Webelio! I'd love to provide you with detailed, personalized information. Our team of experts can address your specific needs and provide comprehensive solutions. You can reach our technical team directly at sales@webel.io, schedule a free consultation at /consultation, or continue chatting with me for immediate assistance. What specific aspect of Webelio's services or processes would you like to explore further?"
 }
 
 // Health check endpoint

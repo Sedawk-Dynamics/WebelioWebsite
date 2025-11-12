@@ -155,7 +155,7 @@ export const companyKnowledge = {
   },
 
   contact: {
-    email: "info@sedawk.in",
+    email: "sales@webel.io",
     phone: "+91 97735 96863",
     address: "5th Floor, Tech Garden, Plot No 4, Sector 35, Udyog Vihar-VII, Gurugram, Haryana, 122004",
     location: "Gurugram, Haryana, India",
