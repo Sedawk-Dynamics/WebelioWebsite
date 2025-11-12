@@ -163,7 +163,7 @@ export default function AboutPage() {
                 <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl" />
                 <div className="relative bg-background/30 backdrop-blur-sm border border-border/50 rounded-3xl p-8">
                   <img
-                    src="/modern-tech-office-teamwork-collaboration.jpg"
+                    src="/images/about-images/IMG_1242.JPG"
                     alt="Webelio Team"
                     className="rounded-2xl w-full h-auto"
                   />
