@@ -37,7 +37,7 @@ export default function CareersPage() {
       desktopSpan: "lg:col-span-2 lg:row-span-2",
     },
     {
-      url: "/images/careers-images/DSC08767.jpg",
+      url: "/images/careers-images/WhatsApp Image 2025-10-18 at 08.27.14_489802c0.jpg",
       caption: "Team Photo",
       mobileSpan: "col-span-1 row-span-1",
       desktopSpan: "lg:col-span-1 lg:row-span-1",
