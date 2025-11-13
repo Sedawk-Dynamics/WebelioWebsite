@@ -17,12 +17,12 @@ export function FooterPopup() {
       id: "services",
       title: "Services",
       items: [
-        { label: "Enterprise Web Development", href: "/services/web-development" },
-        { label: "Mobile App Development", href: "/services/mobile-apps" },
-        { label: "Physical Product Development", href: "/services/physical-products" },
-        { label: "SEO Optimization", href: "/services/seo" },
-        { label: "Google Ads Management", href: "/services/google-ads" },
-        { label: "Patent Services", href: "/services/patents" },
+        { label: "Enterprise Web Development", href: "#" },
+        { label: "Mobile App Development", href: "#" },
+        { label: "Physical Product Development", href: "#" },
+        { label: "SEO Optimization", href: "#" },
+        { label: "Google Ads Management", href: "#" },
+        { label: "Patent Services", href: "#" },
       ],
     },
     {
@@ -41,32 +41,32 @@ export function FooterPopup() {
       id: "resources",
       title: "Resources",
       items: [
-        { label: "Documentation", href: "/docs" },
+        { label: "Documentation", href: "#" },
         { label: "Case Studies", href: "/case-studies" },
-        { label: "White Papers", href: "/white-papers" },
-        { label: "Technical Guides", href: "/guides" },
-        { label: "API Reference", href: "/api" },
-        { label: "Downloads", href: "/downloads" },
+        { label: "White Papers", href: "#" },
+        { label: "Technical Guides", href: "#" },
+        { label: "API Reference", href: "#" },
+        { label: "Downloads", href: "#" },
       ],
     },
     {
       id: "support",
       title: "Support",
       items: [
-        { label: "Help Center", href: "/help" },
+        { label: "Help Center", href: "#" },
         { label: "Free Consultation", href: "/consultation" },
-        { label: "Technical Support", href: "/tech-support" },
-        { label: "Training", href: "/training" },
-        { label: "Community", href: "/community" },
-        { label: "System Status", href: "/status" },
+        { label: "Technical Support", href: "#" },
+        { label: "Training", href: "#" },
+        { label: "Community", href: "#" },
+        { label: "System Status", href: "#" },
       ],
     },
   ]
 
   const contactInfo = [
-    { icon: Mail, label: "Email", value: "hello@weltivation.com", href: "mailto:hello@weltivation.com" },
-    { icon: Phone, label: "Phone", value: "+1 (555) 123-4567", href: "tel:+15551234567" },
-    { icon: MapPin, label: "Location", value: "San Francisco, CA", href: "#" },
+    { icon: Mail, label: "Email", value: "sales@webel.io", href: "mailto:sales@webel.io" },
+    { icon: Phone, label: "Phone", value: "+91 97735 96863", href: "tel:+919773596863" },
+    { icon: MapPin, label: "Location", value: "5th Floor, Tech Garden, Plot No 4, Sector 35, Udyog Vihar-VII, Gurugram, Haryana, 122004", href: "#" },
   ]
 
   return (
@@ -106,9 +106,11 @@ export function FooterPopup() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
                   <div className="flex items-center space-x-4">
-                    <img src="/images/weltivation-logo.png" alt="Weltivation" className="h-12" />
+                    <img src="/images/webelio-logo.png" alt="Webel.io" className="h-12" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Ready to build the future together?</p>
+                      <h3 className="text-lg font-semibold text-primary mb-1">Webel.io</h3>
+                      <p className="text-sm text-muted-foreground">Global IT & Software Solutions & Consulting Firm</p>
+                      <p className="text-xs text-muted-foreground mt-1">A brand of Sedawk Dynamics Pvt Ltd</p>
                     </div>
                   </div>
                   <button
@@ -129,10 +131,17 @@ export function FooterPopup() {
                           <a
                             key={index}
                             href={item.href}
+                            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                              if (item.href === "#") {
+                                e.preventDefault();
+                              }
+                            }}
                             className="block text-sm text-muted-foreground hover:text-primary transition-colors py-1 hover:pl-2 group flex items-center"
                           >
                             <span>{item.label}</span>
-                            <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            {item.href !== "#" && (
+                              <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            )}
                           </a>
                         ))}
                       </div>
@@ -170,13 +179,20 @@ export function FooterPopup() {
                                 <motion.a
                                   key={index}
                                   href={item.href}
+                                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                                    if (item.href === "#") {
+                                      e.preventDefault();
+                                    }
+                                  }}
                                   className="block text-sm text-muted-foreground hover:text-primary transition-colors py-2 hover:pl-2 flex items-center group"
                                   initial={{ x: -10, opacity: 0 }}
                                   animate={{ x: 0, opacity: 1 }}
                                   transition={{ delay: index * 0.05 }}
                                 >
                                   <span>{item.label}</span>
-                                  <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  {item.href !== "#" && (
+                                    <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  )}
                                 </motion.a>
                               ))}
                             </div>
@@ -195,7 +211,7 @@ export function FooterPopup() {
                         <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
                         <span>All systems operational</span>
                       </div>
-                      <span className="text-sm text-muted-foreground">© 2025 Weltivation. All rights reserved.</span>
+                      <span className="text-sm text-muted-foreground">© {new Date().getFullYear()} Sedawk Dynamics Pvt Ltd. All rights reserved.</span>
                     </div>
 
                     <div className="flex flex-wrap justify-center lg:justify-end gap-6">
