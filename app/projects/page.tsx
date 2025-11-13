@@ -624,7 +624,7 @@ export default function ProjectsPage() {
                       <img
                         src={project.logo || "/placeholder.svg"}
                         alt={project.name}
-                        className="w-16 h-16 object-contain bg-gray-800/50 rounded-lg p-2"
+                        className="w-16 h-16 object-contain bg-white rounded-lg p-0.5"
                       />
                       <div className="flex-1">
                         <h2 className="text-xl font-bold text-white">{project.name}</h2>
@@ -908,7 +908,7 @@ export default function ProjectsPage() {
                         <img
                           src={project.logo || "/placeholder.svg"}
                           alt={project.name}
-                          className="w-8 h-8 object-contain bg-gray-800 rounded p-1 flex-shrink-0"
+                          className="w-8 h-8 object-contain bg-white rounded p-0 flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
@@ -972,7 +972,7 @@ export default function ProjectsPage() {
                       <img
                         src={selectedProject.logo || "/placeholder.svg"}
                         alt={selectedProject.name}
-                        className="w-24 h-24 object-contain bg-gray-800/50 rounded-xl p-4 border border-gray-700"
+                        className="w-24 h-24 object-contain bg-white rounded-xl p-1 border border-gray-700"
                       />
                       <div>
                         <h2 className="text-3xl font-bold text-white mb-2">{selectedProject.name}</h2>

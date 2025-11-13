@@ -36,7 +36,7 @@ export default function CareersPage() {
       desktopSpan: "lg:col-span-2 lg:row-span-2",
     },
     {
-      url: "/images/careers-images/DSC08767.JPG",
+      url: "/images/careers-images/DSC08767.jpg",
       caption: "Team Photo",
       mobileSpan: "col-span-1 row-span-1",
       desktopSpan: "lg:col-span-1 lg:row-span-1",
@@ -420,11 +420,12 @@ export default function CareersPage() {
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-110"
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            priority={index < 2}
-                            loading={index < 2 ? undefined : "lazy"}
-                            quality={85}
+                            priority={index < 6}
+                            loading={index < 6 ? undefined : "lazy"}
+                            quality={index < 6 ? 90 : 80}
                             placeholder="blur"
                             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                            fetchPriority={index < 6 ? "high" : "auto"}
                           />
                           {/* Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
@@ -472,6 +473,7 @@ export default function CareersPage() {
                         sizes="(max-width: 640px) 600px, (max-width: 1024px) 700px, 800px"
                         quality={90}
                         priority
+                        fetchPriority="high"
                       />
                       {/* Caption overlay */}
                       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
