@@ -141,8 +141,8 @@ export function NavBar() {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              className={`lg:hidden absolute top-full left-0 right-0 backdrop-blur-[128px] border-b border-gray-800 ${
-                scrolled ? "bg-black/85" : "bg-black/60"
+              className={`lg:hidden absolute top-full left-0 right-0 backdrop-blur-[256px] backdrop-saturate-200 border-b border-gray-800 ${
+                scrolled ? "bg-black/95" : "bg-black/90"
               }`}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
