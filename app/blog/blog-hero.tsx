@@ -10,19 +10,25 @@ export function BlogHero() {
       transition={{ duration: 0.8 }}
       className="relative py-20"
     >
+      {/* Colored gradient background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-webelio-tertiary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-webelio-secondary/10 rounded-full blur-3xl" />
+      </div>
+
       {/* Geometric background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           initial={{ scale: 0, rotate: 0 }}
           animate={{ scale: 1, rotate: 45 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="absolute top-10 right-10 w-32 h-32 border border-webelio-tertiary/20 rounded-lg"
+          className="absolute top-10 right-10 w-32 h-32 border border-webelio-tertiary/30 rounded-lg bg-webelio-tertiary/5"
         />
         <motion.div
           initial={{ scale: 0, rotate: 0 }}
           animate={{ scale: 1, rotate: -45 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="absolute bottom-10 left-10 w-24 h-24 border border-webelio-secondary/20 rounded-full"
+          className="absolute bottom-10 left-10 w-24 h-24 border border-webelio-secondary/30 rounded-full bg-webelio-secondary/5"
         />
       </div>
 
@@ -34,7 +40,7 @@ export function BlogHero() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="space-y-4"
         >
-          <div className="inline-flex items-center gap-3 px-4 py-2 bg-background/30 backdrop-blur-sm border border-border/30 rounded-full">
+          <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-webelio-tertiary/10 via-webelio-secondary/10 to-webelio-tertiary/10 backdrop-blur-sm border border-webelio-tertiary/20 rounded-full">
             <div className="w-2 h-2 bg-webelio-tertiary rounded-full animate-pulse" />
             <span className="text-xs uppercase tracking-widest text-muted-foreground">Latest Articles</span>
           </div>

@@ -75,8 +75,14 @@ export function BlogClient({ posts, categories: initialCategories }: BlogClientP
       )}
 
       {/* Modern Card Grid */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <section className="py-8 relative">
+        {/* Background gradient overlay */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-0 w-1/3 h-1/2 bg-gradient-to-r from-webelio-tertiary/5 to-transparent" />
+          <div className="absolute bottom-1/4 right-0 w-1/3 h-1/2 bg-gradient-to-l from-webelio-secondary/5 to-transparent" />
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 relative">
           {filteredPosts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredPosts.map((post, index) => (
@@ -88,7 +94,7 @@ export function BlogClient({ posts, categories: initialCategories }: BlogClientP
                   className="group"
                 >
                   <Link href={`/blog/${post.slug}`} className="block h-full">
-                    <div className="relative h-full bg-background/40 backdrop-blur-sm border border-border/40 rounded-2xl overflow-hidden hover:border-webelio-tertiary/50 transition-all duration-300 flex flex-col hover:shadow-lg hover:shadow-webelio-tertiary/10">
+                    <div className="relative h-full bg-gradient-to-br from-background/50 via-background/40 to-background/50 backdrop-blur-sm border border-border/40 rounded-2xl overflow-hidden hover:border-webelio-tertiary/50 transition-all duration-300 flex flex-col hover:shadow-lg hover:shadow-webelio-tertiary/20 group-hover:from-webelio-tertiary/5 group-hover:via-background/40 group-hover:to-webelio-secondary/5">
                       {/* Image */}
                       <div className="relative aspect-[16/10] overflow-hidden bg-background/20">
                         <img
@@ -97,6 +103,7 @@ export function BlogClient({ posts, categories: initialCategories }: BlogClientP
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-webelio-tertiary/10 via-transparent to-webelio-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                         
                         {/* Category badge */}
                         {post.category && (

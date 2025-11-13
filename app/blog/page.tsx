@@ -47,8 +47,10 @@ export default async function BlogPage() {
         <NavBar />
 
         {/* Hero Section */}
-        <section className="pt-32 pb-20 px-4 sm:px-6">
-          <div className="max-w-7xl mx-auto">
+        <section className="pt-32 pb-20 px-4 sm:px-6 relative">
+          {/* Section background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-webelio-tertiary/3 to-transparent pointer-events-none" />
+          <div className="max-w-7xl mx-auto relative">
             <BlogHero />
             <BlogClient posts={blogPosts} categories={[]} />
           </div>
