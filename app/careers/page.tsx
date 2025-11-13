@@ -25,6 +25,7 @@ import { useState } from "react"
 
 export default function CareersPage() {
   const [hoveredImage, setHoveredImage] = useState<number | null>(null)
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
   
   // Company images with varied sizes - carefully arranged to fill gaps
   // Layout pattern: Each row should sum to 4 columns on desktop, 3 on tablet, 2 on mobile
@@ -414,19 +415,29 @@ export default function CareersPage() {
                       className={`relative group overflow-hidden rounded-lg sm:rounded-xl cursor-pointer ${image.mobileSpan} ${image.desktopSpan} min-h-[150px] sm:min-h-[180px] z-10`}
                     >
                         <div className="relative w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
-                          <Image
-                            src={image.url || "/placeholder.svg"}
-                            alt={image.caption}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            priority={index < 6}
-                            loading={index < 6 ? undefined : "lazy"}
-                            quality={index < 6 ? 90 : 80}
-                            placeholder="blur"
-                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-                            fetchPriority={index < 6 ? "high" : "auto"}
-                          />
+                          {imageErrors.has(index) ? (
+                            <div className="w-full h-full bg-background/20 flex items-center justify-center">
+                              <p className="text-muted-foreground text-xs">Image unavailable</p>
+                            </div>
+                          ) : (
+                            <Image
+                              src={image.url || "/placeholder.svg"}
+                              alt={image.caption}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                              priority={index < 6}
+                              loading={index < 6 ? undefined : "lazy"}
+                              quality={index < 6 ? 90 : 80}
+                              placeholder="blur"
+                              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                              fetchPriority={index < 6 ? "high" : "auto"}
+                              onError={() => {
+                                setImageErrors(prev => new Set(prev).add(index))
+                              }}
+                              unoptimized={image.url?.includes('DSC08767')}
+                            />
+                          )}
                           {/* Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
                           
