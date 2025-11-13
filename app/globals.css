@@ -82,6 +82,16 @@ body {
   overflow-x: hidden;
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
 /* Calendly widget transparent background - target main container divs */
 .calendly-widget-wrapper > div,
 .calendly-widget-wrapper > div > div {

@@ -3,10 +3,11 @@
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { BlogNewsletterForm } from "./blog-newsletter-form"
+import { ArrowRight, Mail } from "lucide-react"
 
 export function NewsletterCTA() {
   return (
-    <section className="py-20 px-4 sm:px-6 bg-gradient-to-b from-transparent via-webelio-tertiary/5 to-transparent">
+    <section className="py-20 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -15,25 +16,40 @@ export function NewsletterCTA() {
           viewport={{ once: true }}
           className="relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/20 to-webelio-secondary/20 rounded-3xl blur-3xl opacity-50" />
-          <div className="relative bg-background/50 backdrop-blur-sm border border-border/50 rounded-3xl p-12 text-center space-y-6">
-            <h2 className="text-3xl sm:text-4xl font-bold">
-              <span className="text-foreground">Stay Updated with </span>
-              <span className="text-webelio-tertiary">Tech Insights</span>
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Subscribe to our newsletter for the latest articles, industry trends, and technology updates delivered
-              to your inbox.
-            </p>
-            <div className="flex flex-col items-center justify-center gap-6 pt-4">
+          {/* Centered Card Design */}
+          <div className="relative bg-background/40 backdrop-blur-sm border border-border/40 rounded-2xl p-8 sm:p-12 text-center space-y-8">
+            {/* Icon */}
+            <div className="flex justify-center">
+              <div className="w-16 h-16 bg-webelio-tertiary/20 rounded-2xl flex items-center justify-center">
+                <Mail className="w-8 h-8 text-webelio-tertiary" />
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-4">
+              <h2 className="text-3xl sm:text-4xl font-bold">
+                Stay in the Loop
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Subscribe to get the latest articles, insights, and updates delivered to your inbox.
+              </p>
+            </div>
+
+            {/* Form */}
+            <div className="flex justify-center">
               <div className="w-full max-w-md">
                 <BlogNewsletterForm />
               </div>
+            </div>
+
+            {/* Bottom Link */}
+            <div className="pt-4">
               <Link
                 href="/projects"
-                className="px-8 py-4 bg-background/50 border border-border/50 text-foreground rounded-lg font-medium hover:border-webelio-tertiary/50 transition-all"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
               >
-                View Our Projects
+                <span>Explore our projects</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
