@@ -66,26 +66,8 @@ export default function CareersPage() {
       desktopSpan: "lg:col-span-1 lg:row-span-1",
     },
     {
-      url: "/images/careers-images/PXL_20250802_070735729.jpg",
-      caption: "Team Bonding",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
       url: "/images/careers-images/PXL_20250712_124629748.jpg",
       caption: "Happy Times",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/20250707_183014.jpg",
-      caption: "Team Fun",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-2",
-    },
-    {
-      url: "/images/careers-images/20250707_175253.jpg",
-      caption: "Celebration",
       mobileSpan: "col-span-1 row-span-1",
       desktopSpan: "lg:col-span-1 lg:row-span-1",
     },
@@ -108,38 +90,8 @@ export default function CareersPage() {
       desktopSpan: "lg:col-span-1 lg:row-span-1",
     },
     {
-      url: "/images/careers-images/PXL_20250620_122730957.jpg",
-      caption: "Team Collaboration",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/20250620_175123.jpg",
-      caption: "Life at Webelio",
-      mobileSpan: "col-span-2 row-span-1",
-      desktopSpan: "lg:col-span-2 lg:row-span-1",
-    },
-    {
       url: "/images/careers-images/PXL_20250620_085606706.jpg",
       caption: "Team Gathering",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/PXL_20250620_085359799.jpg",
-      caption: "Office Celebration",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/PXL_20250620_085357513.jpg",
-      caption: "Team Moments",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/PXL_20250513_060746105.jpg",
-      caption: "Birthday Celebrations",
       mobileSpan: "col-span-1 row-span-1",
       desktopSpan: "lg:col-span-1 lg:row-span-2",
     },
@@ -180,12 +132,6 @@ export default function CareersPage() {
       desktopSpan: "lg:col-span-1 lg:row-span-1",
     },
     {
-      url: "/images/careers-images/WhatsApp Image 2025-11-03 at 21.18.01_3be246e5.jpg",
-      caption: "Celebration Time",
-      mobileSpan: "col-span-2 row-span-1",
-      desktopSpan: "lg:col-span-2 lg:row-span-1",
-    },
-    {
       url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.49_872c91e2.jpg",
       caption: "Team Fun",
       mobileSpan: "col-span-1 row-span-1",
@@ -198,34 +144,10 @@ export default function CareersPage() {
       desktopSpan: "lg:col-span-1 lg:row-span-1",
     },
     {
-      url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.53_9f76e14e.jpg",
-      caption: "Team Bonding",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/WhatsApp Image 2025-08-02 at 19.52.58_496604b4.jpg",
-      caption: "Special Moments",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/WhatsApp Image 2025-07-08 at 00.55.21_7780d75f.jpg",
-      caption: "Team Together",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-2",
-    },
-    {
       url: "/images/careers-images/WhatsApp Image 2025-07-08 at 00.55.08_81d613ae.jpg",
       caption: "Happy Times",
       mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
-    },
-    {
-      url: "/images/careers-images/WhatsApp Image 2025-07-07 at 19.59.13_9b4fdd4a.jpg",
-      caption: "Team Spirit",
-      mobileSpan: "col-span-1 row-span-1",
-      desktopSpan: "lg:col-span-1 lg:row-span-1",
+      desktopSpan: "lg:col-span-1 lg:row-span-2",
     },
     {
       url: "/images/careers-images/WhatsApp Image 2025-06-20 at 22.08.59_75ce6f0b.jpg",
@@ -498,7 +420,11 @@ export default function CareersPage() {
                             fill
                             className="object-cover transition-transform duration-500 group-hover:scale-110"
                             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                            priority={index < 4}
+                            priority={index < 2}
+                            loading={index < 2 ? undefined : "lazy"}
+                            quality={85}
+                            placeholder="blur"
+                            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                           />
                           {/* Gradient Overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
@@ -544,6 +470,7 @@ export default function CareersPage() {
                         fill
                         className="object-cover"
                         sizes="(max-width: 640px) 600px, (max-width: 1024px) 700px, 800px"
+                        quality={90}
                         priority
                       />
                       {/* Caption overlay */}
