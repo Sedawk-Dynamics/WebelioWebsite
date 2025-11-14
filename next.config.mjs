@@ -25,7 +25,7 @@ const nextConfig = {
       },
       {
         source: '/contact-us',
-        destination: '/contact',
+        destination: '/support',
         permanent: true,
       },
     ]
