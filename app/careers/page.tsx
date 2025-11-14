@@ -24,7 +24,6 @@ import Image from "next/image"
 import { useState } from "react"
 
 export default function CareersPage() {
-  const [hoveredImage, setHoveredImage] = useState<number | null>(null)
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
   
   // Company images with varied sizes - carefully arranged to fill gaps
@@ -410,9 +409,7 @@ export default function CareersPage() {
                       whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.5, delay: 0.05 * (index % 10) }}
                       viewport={{ once: true }}
-                      onMouseEnter={() => setHoveredImage(index)}
-                      onMouseLeave={() => setHoveredImage(null)}
-                      className={`relative group overflow-hidden rounded-lg sm:rounded-xl cursor-pointer ${image.mobileSpan} ${image.desktopSpan} min-h-[150px] sm:min-h-[180px] z-10`}
+                      className={`relative overflow-hidden rounded-lg sm:rounded-xl ${image.mobileSpan} ${image.desktopSpan} min-h-[150px] sm:min-h-[180px] z-10`}
                     >
                         <div className="relative w-full h-full overflow-hidden rounded-lg sm:rounded-xl">
                           {imageErrors.has(index) ? (
@@ -424,7 +421,7 @@ export default function CareersPage() {
                               src={image.url || "/placeholder.svg"}
                               alt={image.caption}
                               fill
-                              className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              className="object-cover"
                               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                               priority={index < 6}
                               loading={index < 6 ? undefined : "lazy"}
@@ -439,7 +436,7 @@ export default function CareersPage() {
                             />
                           )}
                           {/* Gradient Overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60" />
                           
                           {/* Caption */}
                           <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-4 z-10">
@@ -447,55 +444,11 @@ export default function CareersPage() {
                               {image.caption}
                             </p>
                           </div>
-                          
-                          {/* Hover effect border */}
-                          <div className="absolute inset-0 border-2 border-webelio-tertiary/0 group-hover:border-webelio-tertiary/50 rounded-lg sm:rounded-xl transition-all duration-300 pointer-events-none" />
                         </div>
                       </motion.div>
                     ))}
                 </div>
               </div>
-
-              {/* Enlarged Image Overlay on Hover */}
-              {hoveredImage !== null && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none"
-                  style={{
-                    background: "rgba(0, 0, 0, 0.75)",
-                    backdropFilter: "blur(8px)",
-                  }}
-                >
-                  <div className="relative flex items-center justify-center p-4">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
-                      className="relative w-[600px] h-[450px] sm:w-[700px] sm:h-[500px] lg:w-[800px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl border-2 border-webelio-tertiary/40 bg-black/60"
-                    >
-                      <Image
-                        src={companyImages[hoveredImage].url || "/placeholder.svg"}
-                        alt={companyImages[hoveredImage].caption}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 600px, (max-width: 1024px) 700px, 800px"
-                        quality={90}
-                        priority
-                        fetchPriority="high"
-                      />
-                      {/* Caption overlay */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
-                        <p className="text-white font-semibold text-lg sm:text-xl lg:text-2xl drop-shadow-lg text-center">
-                          {companyImages[hoveredImage].caption}
-                        </p>
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              )}
 
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-webelio-tertiary/10 to-webelio-secondary/10 rounded-3xl blur-3xl -z-10 opacity-50" />
