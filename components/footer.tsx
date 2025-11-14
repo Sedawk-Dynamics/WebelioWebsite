@@ -47,7 +47,6 @@ export function Footer() {
       title: "Company",
       items: [
         { label: "About", href: "/about" },
-        { label: "Portfolio", href: "/portfolio" },
         { label: "Projects", href: "/projects" },
         { label: "Process", href: "/process" },
         { label: "Careers", href: "/careers" },
